@@ -16,10 +16,10 @@ the backend is deployed in vercel and the frontend is deployed in firebase.
 
 ### FrontEnd
 
-[![Frontend](https://img.shields.io/badge/Frontend-02569B?logo=flutter&logoColor=white)](https://github.com/ImRLopezAG/Forget-Project/tree/main/Internet_Banking#readme)
+[![Frontend](https://img.shields.io/badge/Frontend-02569B?logo=flutter&logoColor=white)](https://github.com/ImRLopezAG/InternetBanking-Project/tree/main/internet_banking#readme)
 ### BackEnd
 
-[![Express Api](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)](https://github.com/ImRLopezAG/Forget-Project/tree/main/Internet-Banking-Api#readme)
+[![Express Api](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)](https://github.com/ImRLopezAG/InternetBanking-Project/tree/main/Internet-banking-API#readme)
 
 ## Authors
 
