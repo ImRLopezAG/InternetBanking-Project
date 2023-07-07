@@ -71,9 +71,6 @@ const swaggerDefinition: OAS3Definition = {
           lastName: {
             type: 'string'
           },
-          image: {
-            type: 'string'
-          },
           username: {
             type: 'string'
           },
@@ -84,17 +81,17 @@ const swaggerDefinition: OAS3Definition = {
             type: 'string'
           },
           role: {
-            type: 'string'
+            type: 'string',
+            enum: ['client', 'admin']
           }
         },
         example: {
           firstName: 'John',
           lastName: 'Doe',
-          image: 'example.jpg',
           username: 'John',
           email: 'john@example.com',
           password: '123456abc',
-          role: 'user'
+          role: 'client'
         }
       },
       User: {
@@ -118,24 +115,28 @@ const swaggerDefinition: OAS3Definition = {
           password: {
             type: 'string'
           },
-          image: {
-            type: 'string'
-          },
           role: {
             type: 'string',
-            enum: ['USER', 'ADMIN']
+            enum: ['user', 'admin']
           }
         }
       },
       SaveProduct: {
         type: 'object',
+        required: ['user'],
         properties: {
-          userId: {
+          user: {
             type: 'string'
+          },
+          type: {
+            type: 'string',
+            enum: ['savings', 'credit', 'loan'],
+            default: 'savings'
           }
         },
         example: {
-          userId: 'your user id'
+          user: 'your user id',
+          type: 'loan'
         }
       },
       Product: {
@@ -159,11 +160,15 @@ const swaggerDefinition: OAS3Definition = {
           cardHolder: {
             type: 'string'
           },
-          userId: {
+          user: {
             type: 'string'
           },
           balance: {
             type: 'number'
+          },
+          type: {
+            type: 'string',
+            enum: ['savings', 'credit', 'loan']
           }
         }
       }

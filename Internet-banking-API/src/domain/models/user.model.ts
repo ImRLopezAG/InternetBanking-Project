@@ -32,9 +32,6 @@ export class User extends BaseEntity {
   @prop({ required: true })
   declare password: string
 
-  @prop()
-  declare image: string
-
   @prop({ enum: UserRole, default: UserRole.USER })
   declare role: UserRole
 }

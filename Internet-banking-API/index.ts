@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import app from './src/app'
+import app from './src/root'
 import { DbContext } from './src/domain/database/context'
 import { ProductModel, UserModel } from './src/domain'
 import { PORT } from './src/utils/constants'

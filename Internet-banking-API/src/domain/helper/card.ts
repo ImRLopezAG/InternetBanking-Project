@@ -1,3 +1,10 @@
+interface Card {
+  cardNumber: string
+  pin: string
+  cvv: string
+  expirationDate: string
+  cardHolder: string
+}
 export class Generate {
   static cardNumber (): string {
     let cardNumber = Array.from({ length: 16 }, () =>
@@ -50,5 +57,15 @@ export class Generate {
 
   private static next (min: number, max: number): number {
     return Math.floor(Math.random() * (max - min) + min)
+  }
+
+  static card (): Card {
+    return {
+      cardNumber: this.cardNumber(),
+      pin: this.pin(),
+      cvv: this.cvv(),
+      expirationDate: this.expirationDate(),
+      cardHolder: this.cardHolder(this.cardNumber())
+    }
   }
 }

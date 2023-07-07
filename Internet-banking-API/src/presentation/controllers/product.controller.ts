@@ -1,5 +1,5 @@
-import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
+import 'reflect-metadata'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, ProductService } from '../../app/'
 import { Generate, Product } from '../../domain'
@@ -17,24 +17,15 @@ export class ProductController extends GenericController<Product, ProductService
   override async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const entity: Product = req.body
+      const { cardNumber, pin, cvv, expirationDate, cardHolder } = Generate.card()
 
-      if (!entity.userId) return res.status(400).json({ message: 'The userId is required' })
-
-      const card = Generate.cardNumber()
-      const pin = Generate.pin()
-      const cvv = Generate.cvv()
-      const expirationDate = Generate.expirationDate()
-      const cardHolder = Generate.cardHolder(card)
-
-      entity.cardNumber = card
+      entity.cardNumber = cardNumber
       entity.pin = pin
       entity.cvv = cvv
       entity.expirationDate = expirationDate
       entity.cardHolder = cardHolder
 
-      const newEntity = await this.service.Create(entity)
-
-      return res.status(201).json(newEntity)
+      return await super.Create(req, res, next)
     } catch (error) {
       if (error instanceof Error) {
         return next(error)

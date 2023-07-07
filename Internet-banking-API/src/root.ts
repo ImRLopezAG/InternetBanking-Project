@@ -1,10 +1,9 @@
-import bodyParser from 'body-parser'
-import cors from 'cors'
 import express, { Application, Request, Response } from 'express'
+import cors from 'cors'
+import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import * as router from './presentation'
-import { errorHandler } from './presentation'
-import { BASE } from './utils/constants'
+import { BASE } from './utils'
 
 const app: Application = express()
 
@@ -23,6 +22,6 @@ app.use(`${BASE}auth`, router.auth)
 app.use(`${BASE}user`, router.user)
 app.use(`${BASE}product`, router.product)
 
-app.use('*', errorHandler)
+app.use('*', router.errorHandler)
 
 export default app
