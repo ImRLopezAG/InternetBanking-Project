@@ -1,4 +1,6 @@
 export * from './docs.router'
 export * from './user.router'
 export * from './product.router'
+export * from './payment.router'
+export * from './beneficiary.router'
 export * from './auth.router'

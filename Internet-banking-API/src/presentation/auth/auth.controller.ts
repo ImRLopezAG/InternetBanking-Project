@@ -25,9 +25,12 @@ export const authenticate = async (
   }
 
   try {
-    const user = await UserModel.findOne({ username }).exec()
+    let user = await UserModel.findOne({ username }).exec()
     if (!user) {
-      return res.status(400).json({ error: 'The user is incorrect' })
+      user = await UserModel.findOne({ email: username }).exec()
+      if (!user) {
+        return res.status(400).json({ error: 'The user does not exist' })
+      }
     }
 
     const match = await bcrypt.compare(password, user.password)

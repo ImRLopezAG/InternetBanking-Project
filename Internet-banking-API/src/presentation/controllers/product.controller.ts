@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express'
 import 'reflect-metadata'
+import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, ProductService } from '../../app/'
 import { Generate, Product } from '../../domain'
-import { IProductController } from '../../interfaces/controllers'
+import { IProductController } from '../../interfaces'
 
 @injectable()
 @scoped(Lifecycle.ContainerScoped)

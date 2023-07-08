@@ -1,5 +1,5 @@
 import { User, UserModel } from '../../domain/models'
-import { IUserService } from '../../interfaces/services'
+import { IUserService } from '../../interfaces'
 import { GenericService } from '../core'
 
 export class UserService extends GenericService<User> implements IUserService {

@@ -21,6 +21,8 @@ app.use(`${BASE}docs`, router.docs)
 app.use(`${BASE}auth`, router.auth)
 app.use(`${BASE}user`, router.user)
 app.use(`${BASE}product`, router.product)
+app.use(`${BASE}payment`, router.payment)
+app.use(`${BASE}beneficiary`, router.beneficiary)
 
 app.use('*', router.errorHandler)
 

@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, UserService } from '../../app/'
 import { User } from '../../domain'
-import { IUserController } from '../../interfaces/controllers'
+import { IUserController } from '../../interfaces'
 
 @injectable()
 @scoped(Lifecycle.ContainerScoped)

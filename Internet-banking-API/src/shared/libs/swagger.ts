@@ -171,6 +171,68 @@ const swaggerDefinition: OAS3Definition = {
             enum: ['savings', 'credit', 'loan']
           }
         }
+      },
+      SaveBeneficiary: {
+        type: 'object',
+        required: ['sender', 'receptor'],
+        properties: {
+          sender: {
+            type: 'string'
+          },
+          receptor: {
+            type: 'string'
+          }
+        },
+        example: {
+          sender: 'your user id',
+          receptor: 'beneficiary user id'
+        }
+      },
+      Beneficiary: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string'
+          },
+          sender: {
+            type: 'string'
+          },
+          receptor: {
+            type: 'string'
+          }
+        }
+      },
+      SavePayment: {
+        type: 'object',
+        required: ['sender', 'receptor', 'amount'],
+        properties: {
+          sender: {
+            type: 'string'
+          },
+          receptor: {
+            type: 'string'
+          },
+          amount: {
+            type: 'number'
+          }
+        }
+      },
+      Payment: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string'
+          },
+          sender: {
+            type: 'string'
+          },
+          receptor: {
+            type: 'string'
+          },
+          amount: {
+            type: 'number'
+          }
+        }
       }
     }
   },
@@ -186,6 +248,14 @@ const swaggerDefinition: OAS3Definition = {
     {
       name: 'Product',
       description: 'Product management'
+    },
+    {
+      name: 'Beneficiary',
+      description: 'Beneficiary management'
+    },
+    {
+      name: 'Payment',
+      description: 'Payment management'
     }
   ],
   paths: {
@@ -603,6 +673,37 @@ const swaggerDefinition: OAS3Definition = {
         responses: {
           204: {
             description: 'Delete a product'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/beneficiary/list': {
+      get: {
+        tags: ['Beneficiary'],
+        summary: 'Get all beneficiaries',
+        description: 'Get all beneficiaries',
+        responses: {
+          200: {
+            description: 'Get all beneficiaries',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Beneficiary'
+                  }
+                }
+              }
+            }
           },
           401: {
             description: 'Unauthorized'
