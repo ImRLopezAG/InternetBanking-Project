@@ -53,7 +53,28 @@ Documentation: Swagger
 
 # API Reference
 
+#### types of users
+
+| Role | Description                |
+| :--- | :------------------------- |
+| 1    | **Admin**                  |
+| 2    | **Client**                 |
+
+### type of products
+
+| Role | Description                |
+| :--- | :------------------------- |
+| 1    | **Debit**                 |
+| 2    | **Credit**                  |
+| 3   | **Saving**                  |
+| 4   | **Loan**                  |
+
 ## Authenticate with JWT
+
+
+```
+  authorization: Bearer ${token}
+```
 
 #### Log In
 
@@ -63,67 +84,28 @@ Documentation: Swagger
 
 | Body       | Type     | Description            |
 | :--------- | :------- | :--------------------- |
-| `email`    | `string` | **Required**. email    |
-| `password` | `string` | **Required**. password |
+| `email or username`    | `string` | **Required**.    |
+| `password` | `string` | **Required**. |
 
 #### Log out
 
 ```
-  Post /api/Auth/LogOut
+  Post /api/Auth/logOut
 ```
-
-## Products
-
-### Get Products
-
-```
-  GET /api/Product/List
-```
-
-### Get Product
-
-```
-  GET /api/Product/Get/${id}
-```
-
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of item to fetch |
-
-### Add Product
-
-```
-  Post /api/Product/Create
-```
-
-| Body          | Type     | Description   |
-| :------------ | :------- | :------------ |
-| `userId`        | `string` | **Required**. |
-
-
-
-### Delete Product
-
-```
-  Delete /api/Product/Delete/${id}
-```
-
-| Parameter | Type     | Description   |
-| :-------- | :------- | :------------ |
-| `id`      | `string` | **Required**. |
-
 ## Users
+
+unless you are authenticated as admin you can only get your own user and create a new one as a client
 
 ### Get Users
 
 ```
-  GET /api/User/List
+  GET /api/user/list
 ```
 
 ### Get User
 
 ```
-  GET /api/User/Get/${id}
+  GET /api/user/get/${id}
 ```
 
 | Parameter | Type     | Description                       |
@@ -133,7 +115,7 @@ Documentation: Swagger
 ### Get User by email
 
 ```
-  GET /api/User/email/${email}
+  GET /api/user/email/${email}
 ```
 
 | Parameter | Type     | Description                       |
@@ -143,7 +125,7 @@ Documentation: Swagger
 ### Get User by username
 
 ```
-  GET /api/User/username/${username}
+  GET /api/user/username/${username}
 ```
 
 | Parameter  | Type     | Description                       |
@@ -153,7 +135,7 @@ Documentation: Swagger
 ### Add User
 
 ```
-  Post /api/User/Create
+  Post /api/user/create
 ```
 
 | Body              | Type     | Description   |
@@ -169,7 +151,7 @@ Documentation: Swagger
 ### Update User
 
 ```
-  Put /api/User/Update/${id}
+  Put /api/user/update/${id}
 ```
 
 | Parameter | Type     | Description   |
@@ -189,12 +171,185 @@ Documentation: Swagger
 ### Delete User
 
 ```
-  Delete /api/User/Delete/${id}
+  Delete /api/user/delete/${id}
 ```
 
 | Parameter | Type     | Description   |
 | :-------- | :------- | :------------ |
 | `id`      | `string` | **Required**. |
+## Products
+
+### Get Products
+
+```
+  GET /api/product/list
+```
+
+### Get Product
+
+```
+  GET /api/product/get/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. |
+### Get Product
+
+```
+  GET /api/product/get/${pin}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `pin`      | `string` | **Required**. |
+
+from here all the endpoints need to be authenticated as admin
+### Add Product
+
+```
+  Post /api/product/create
+```
+
+| Body          | Type     | Description   |
+| :------------ | :------- | :------------ |
+| `user`        | `string` | **Required**. |
+| `balance`        | `number` | **Optional**. |
+
+### Add Balance
+
+```
+  Post /api/product/add-balance
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `pin`      | `string` | **Required**. |
+| `balance`        | `number` | **Required**. |
+
+### Update Product
+
+```
+  Put /api/product/update/${id}
+```
+
+| Parameter | Type     | Description   |
+| :-------- | :------- | :------------ |
+| `id`      | `string` | **Required**. |
+
+| Body          | Type     | Description   |
+| :------------ | :------- | :------------ |
+| `balance`        | `number` | **Required**. |
+### Delete Product
+
+```
+  Delete /api/product/delete/${id}
+```
+
+| Parameter | Type     | Description   |
+| :-------- | :------- | :------------ |
+| `id`      | `string` | **Required**. |
+
+
+## Beneficiary 
+
+### Get Beneficiaries
+
+you need to be authenticated as admin
+
+```
+  GET /api/beneficiary/list
+```
+### Get all sender Beneficiaries
+
+```
+  GET /api/beneficiary/list/${sender}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `sender`      | `string` | **Required**. |
+
+### Get Beneficiary
+
+```
+  GET /api/beneficiary/get/${id}  
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. |
+
+### Add Beneficiary
+
+```
+  Post /api/beneficiary/create
+```
+
+| Body          | Type     | Description   |
+| :------------ | :------- | :------------ |
+| `sender`        | `string` | **Required**. |
+| `receptor`        | `string` | **Required**. |
+
+### Delete Beneficiary
+
+you need to be authenticated as the sender of the beneficiary
+
+```
+  Delete /api/beneficiary/delete/${id}
+```
+
+| Parameter | Type     | Description   |
+| :-------- | :------- | :------------ |
+| `id`      | `string` | **Required**. |
+
+
+## Payment
+
+### Get Payments
+
+you need to be authenticated as admin
+
+```
+  GET /api/payment/list
+```
+
+### Get Payments by sender
+
+```
+  GET /api/payment/list/${sender}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `sender`      | `string` | **Required**. |
+
+### Get Payment
+you need to be authenticated as admin
+
+```
+  GET /api/payment/get/${id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. |
+
+### Add Payment
+
+you need to be authenticated as the sender of the payment or as admin
+
+```
+  Post /api/payment/create
+```
+
+| Body          | Type     | Description   |
+| :------------ | :------- | :------------ |
+| `sender`        | `string` | **Required**. |
+| `receptor`        | `string` | **Required**. |
+| `amount`        | `number` | **Required**. |
+
+
 
 ## Authors
 

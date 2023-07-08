@@ -9,11 +9,7 @@ interface ValidateUser {
 }
 
 const services = UserModel
-export const validateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | any> => {
+export const validateUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const { username, email }: ValidateUser = req.body
   const regexInvalidUserName = /[a-zA-Z0-9]/g
   const regexInvalidEmail = /\S+@\S+\.\S+/
@@ -106,6 +102,33 @@ export const validateUpdateUser = async (
   } catch (error) {
     if (error instanceof Error) {
       return res.status(500).send('Internal server error')
+    }
+    return res.status(401).send('Unauthorized')
+  }
+  return next()
+}
+
+export const isAdmin = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
+  const authHeader = req.headers.authorization
+  if (authHeader?.split(' ')[0] !== 'Bearer') {
+    return res.status(401).json({ error: 'Access denied, you need to login' })
+  }
+  const token = authHeader.split(' ')[1]
+  if (token === undefined) {
+    return res
+      .status(401)
+      .json({ status: 401, message: 'Access denied, you need to login' })
+  }
+  try {
+    const payload = jwt.verify(token, SECRET) as JwtPayload
+    const user = await services.findById(payload.uid)
+    if (user?.role !== 1) {
+      return res.status(401).json({ status: 401, message: 'You are not an Admin' })
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error)
+      return next(error)
     }
     return res.status(401).send('Unauthorized')
   }

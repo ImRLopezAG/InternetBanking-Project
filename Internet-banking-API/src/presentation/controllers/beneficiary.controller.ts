@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, BeneficiaryService } from '../../app/'
 import { Beneficiary } from '../../domain'
@@ -11,5 +12,17 @@ export class BeneficiaryController extends GenericController<Beneficiary, Benefi
   constructor (service: BeneficiaryService) {
     super(service)
     this.service = service
+  }
+
+  async GetBySender (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { sender } = req.params
+      const beneficiaries = await this.service.GetBySender(sender)
+      return res.status(200).json(beneficiaries)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
+    }
   }
 }

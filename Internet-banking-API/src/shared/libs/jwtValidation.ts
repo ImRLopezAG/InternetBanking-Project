@@ -26,6 +26,9 @@ export const jwtValidation = (
     if (error instanceof Error) {
       return res.status(500).send('Internal server error')
     }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).send('Unauthorized')
+    }
     return res.status(401).send('Unauthorized')
   }
 }

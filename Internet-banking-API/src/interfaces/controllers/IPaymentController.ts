@@ -1,5 +1,6 @@
+import { NextFunction, Request, Response } from 'express'
 import { IGenericController } from '../../utils/constants'
 
 export interface IPaymentController extends IGenericController {
-  // Add your custom methods here
+  GetBySender: (req: Request, res: Response, next: NextFunction) => Promise<Response>
 }

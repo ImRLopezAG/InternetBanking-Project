@@ -15,11 +15,7 @@ export class GenericController< TEntity extends BaseEntity, TService extends Gen
     this.Delete = this.Delete.bind(this)
   }
 
-  async GetAll (
-    _req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async GetAll (_req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const entities = await this.service.GetAll()
 
@@ -32,11 +28,7 @@ export class GenericController< TEntity extends BaseEntity, TService extends Gen
     }
   }
 
-  async Get (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async Get (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const { id } = req.params
       if (!id) {
@@ -59,11 +51,7 @@ export class GenericController< TEntity extends BaseEntity, TService extends Gen
     }
   }
 
-  async Create (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const schema = this.service.GetSchema()
 
@@ -80,18 +68,14 @@ export class GenericController< TEntity extends BaseEntity, TService extends Gen
 
       return res.status(201).json({ created })
     } catch (error: any) {
-      if (error.name === 'MongoServerError') {
+      if (error.name === 'MongoServerError' || error.message.startsWith('BR:')) {
         return res.status(400).json({ message: error.message })
       }
       return next(error)
     }
   }
 
-  async Update (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async Update (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const { id } = req.params
       if (!id) {
@@ -110,18 +94,14 @@ export class GenericController< TEntity extends BaseEntity, TService extends Gen
           .json({ message: `The entity with id ${id} does not exist` })
       }
     } catch (error: any) {
-      if (error.name === 'MongoServerError') {
+      if (error.name === 'MongoServerError' || error.message.startsWith('BR:')) {
         return res.status(400).json({ message: error.message })
       }
       return next(error)
     }
   }
 
-  async Delete (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async Delete (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const { id } = req.params
       if (!id) {

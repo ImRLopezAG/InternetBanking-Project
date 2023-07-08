@@ -3,38 +3,34 @@ import { BaseEntity } from '../../domain/models/base.entity'
 import { IGenericService, Schema } from '../../utils/constants'
 
 export abstract class GenericService<TEntity extends BaseEntity>
-  implements IGenericService<TEntity>
-{
-  protected constructor(private readonly model: ReturnModelType<any>) {}
+implements IGenericService<TEntity> {
+  protected constructor (private readonly model: ReturnModelType<any>) {}
 
-  async GetAll(): Promise<TEntity[]> {
+  async GetAll (): Promise<TEntity[]> {
     const entities = await this.model.find().exec()
     return entities
   }
 
-  async Get(id: string | number): Promise<TEntity | null> {
+  async Get (id: string | number): Promise<TEntity | null> {
     const entity = await this.model.findById(id).exec()
     return entity ?? null
   }
 
-  async Create(entity: TEntity): Promise<TEntity> {
+  async Create (entity: TEntity): Promise<TEntity> {
     const created = await this.model.create(entity)
     return created
   }
 
-  async Update(
-    id: string | number,
-    entity: Partial<TEntity>
-  ): Promise<TEntity> {
+  async Update (id: string | number, entity: Partial<TEntity>): Promise<TEntity> {
     const updatedEntity = await this.model.findByIdAndUpdate(id, entity).exec()
     if (updatedEntity) {
       const newEntity = await this.model.findById(id).exec()
       return newEntity ?? updatedEntity
     }
-    throw new Error(`${this.model.modelName} not found`)
+    throw new Error(`BR: ${this.model.modelName} not found`)
   }
 
-  async Delete(id: string | number): Promise<void> {
+  async Delete (id: string | number): Promise<void> {
     try {
       const deletedEntity = await this.model.findByIdAndDelete(id).exec()
       if (!deletedEntity) {
@@ -46,7 +42,7 @@ export abstract class GenericService<TEntity extends BaseEntity>
     }
   }
 
-  GetSchema(): Schema[] {
+  GetSchema (): Schema[] {
     const schemaPaths = this.model.schema.paths
     const schema: Schema[] = Object.keys(schemaPaths).map((field: string) => {
       const schemaPath = schemaPaths[field]

@@ -3,16 +3,16 @@ import { Router } from 'express'
 import { container } from 'tsyringe'
 import { jwtValidation } from '../../shared/libs'
 import { UserController } from '../controllers'
-import { validateUpdateUser, validateUser } from '../middleware'
+import { isAdmin, validateUpdateUser, validateUser } from '../middleware'
 
 export const user = Router()
 
 const controller: UserController = container.resolve(UserController)
 
-user.get('/list', controller.GetAll)
-user.get('/Get/:id', controller.Get)
-user.get('/email/:email', controller.GetByEmail)
-user.get('/username/:username', controller.GetByUsername)
-user.post('/create', validateUser, controller.Create)
+user.get('/list', isAdmin, controller.GetAll)
+user.get('/get/:id', isAdmin, controller.Get)
+user.get('/get/:email', isAdmin, controller.GetByEmail)
+user.get('/get/:username', isAdmin, controller.GetByUsername)
+user.post('/create', validateUser, isAdmin, controller.Create)
 user.put('/update/:id', jwtValidation, validateUpdateUser, controller.Update)
-user.delete('/delete/:id', controller.Delete)
+user.delete('/delete/:id', isAdmin, controller.Delete)

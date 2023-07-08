@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import app from './src/root'
 import { ProductModel, UserModel, BeneficiaryModel, PaymentModel, DbContext } from './src/domain'
-import { PORT } from './src/utils/constants'
+import { PORT } from './src/utils'
 
 DbContext()
   .then(() => {

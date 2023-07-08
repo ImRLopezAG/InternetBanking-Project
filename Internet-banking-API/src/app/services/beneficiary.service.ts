@@ -5,4 +5,8 @@ export class BeneficiaryService extends GenericService<Beneficiary> implements I
   constructor () {
     super(BeneficiaryModel)
   }
+
+  async GetBySender (sender: string): Promise<Beneficiary[]> {
+    return await BeneficiaryModel.find({ sender }).exec()
+  }
 }

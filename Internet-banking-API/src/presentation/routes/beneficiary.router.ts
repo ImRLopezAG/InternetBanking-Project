@@ -8,6 +8,7 @@ export const beneficiary = Router()
 const controller: BeneficiaryController = container.resolve(BeneficiaryController)
 
 beneficiary.get('/list', controller.GetAll)
+beneficiary.get('/list/:sender', controller.GetBySender)
 beneficiary.get('/get/:id', controller.Get)
 beneficiary.post('/create', controller.Create)
 beneficiary.delete('/delete/:id', controller.Delete)

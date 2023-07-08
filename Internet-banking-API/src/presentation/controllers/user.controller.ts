@@ -1,8 +1,8 @@
-import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
+import 'reflect-metadata'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, UserService } from '../../app/'
-import { User } from '../../domain'
+import { Generate, ProductModel, User } from '../../domain'
 import { IUserController } from '../../interfaces'
 
 @injectable()
@@ -71,6 +71,40 @@ export class UserController extends GenericController<User, UserService> impleme
       return res
         .status(500)
         .json({ status: 500, message: 'Internal server error' })
+    }
+  }
+
+  override async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const schema = this.service.GetSchema()
+
+      for (const field of schema) {
+        if (field.allowNull === false && req.body[field.field] === undefined) {
+          return res
+            .status(400)
+            .json({ message: `The field ${field.field} is required` })
+        }
+      }
+
+      const user = await this.service.Create(req.body)
+      const { balance } = req.body
+      const { pin, cvv, expirationDate, cardNumber, cardHolder } = Generate.card()
+
+      const product = new ProductModel({
+        pin,
+        cvv,
+        expirationDate,
+        cardNumber,
+        cardHolder,
+        user: user._id,
+        balance,
+        principal: true
+      })
+
+      await product.save()
+      return res.status(201).json({ user, product })
+    } catch (error) {
+      return next(error)
     }
   }
 }

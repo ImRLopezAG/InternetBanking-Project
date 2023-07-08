@@ -1,5 +1,5 @@
-import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
+import 'reflect-metadata'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, ProductService } from '../../app/'
 import { Generate, Product } from '../../domain'
@@ -12,6 +12,8 @@ export class ProductController extends GenericController<Product, ProductService
   constructor (service: ProductService) {
     super(service)
     this.service = service
+    this.AddBalance = this.AddBalance.bind(this)
+    this.GetByPin = this.GetByPin.bind(this)
   }
 
   override async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
@@ -26,6 +28,33 @@ export class ProductController extends GenericController<Product, ProductService
       entity.cardHolder = cardHolder
 
       return await super.Create(req, res, next)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
+      return res.status(500).send('Internal server error')
+    }
+  }
+
+  async AddBalance (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { pin, balance } = req.body
+      const product = await this.service.AddBalance(pin, balance)
+      console.log(product)
+      return res.status(200).json(product)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
+      return res.status(500).send('Internal server error')
+    }
+  }
+
+  async GetByPin (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { pin } = req.params
+      const product = await this.service.GetByPin(pin)
+      return res.status(200).json(product)
     } catch (error) {
       if (error instanceof Error) {
         return next(error)
