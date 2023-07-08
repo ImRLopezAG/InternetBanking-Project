@@ -19,10 +19,16 @@ export class Product extends BaseEntity {
   @prop({ required: true })
   declare cardHolder: string
 
-  @prop({ default: 0 })
+  @prop({ required: true, default: 0 })
   declare balance: number
 
-  @prop({ enum: AccountType, default: AccountType.SAVINGS })
+  @prop({ required: true, default: false })
+  declare principal: boolean
+
+  @prop({ required: true, default: 0 })
+  declare limit: number
+
+  @prop({ enum: AccountType, default: AccountType.SAVING })
   declare type: AccountType
 
   @prop({ required: true, ref: () => User })
