@@ -1,10 +1,11 @@
 export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'client'
+  ADMIN = 1,
+  Client
 }
 
 export enum AccountType {
-  SAVINGS = 'savings',
-  LOANS = 'loan',
-  CREDIT = 'credit'
+  DEBIT = 1,
+  CREDIT,
+  SAVING,
+  LOAN
 }

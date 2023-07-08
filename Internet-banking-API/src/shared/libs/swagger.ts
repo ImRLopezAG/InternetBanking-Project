@@ -7,7 +7,7 @@ const swaggerDefinition: OAS3Definition = {
     title: 'Internet - Banking  API',
     version: '1.0',
     description:
-      'This is a REST API application made with Express. It retrieves data from Internet - Banking  DB and returns it in JSON format.',
+      'This is the API documentation for the Internet Banking API, you can find more about this project in the following links:',
     contact: {
       name: 'Angel Lopez',
       url: 'https://imrlopez.dev'
@@ -80,9 +80,14 @@ const swaggerDefinition: OAS3Definition = {
           password: {
             type: 'string'
           },
+          balance: {
+            type: 'number'
+          },
           role: {
-            type: 'string',
-            enum: ['client', 'admin']
+            type: 'number',
+            enum: ['admin', 'client'],
+            default: 'client',
+            description: '1 for admin, 2 for client'
           }
         },
         example: {
@@ -91,7 +96,8 @@ const swaggerDefinition: OAS3Definition = {
           username: 'John',
           email: 'john@example.com',
           password: '123456abc',
-          role: 'client'
+          balance: 500,
+          role: 2
         }
       },
       User: {
@@ -129,14 +135,19 @@ const swaggerDefinition: OAS3Definition = {
             type: 'string'
           },
           type: {
-            type: 'string',
-            enum: ['savings', 'credit', 'loan'],
-            default: 'savings'
+            type: 'number',
+            enum: ['debit', 'credit', 'saving', 'loan'],
+            default: 'savings',
+            description: '1 for debit, 2 for credit, 3 for savings, 4 for loan'
+          },
+          balance: {
+            type: 'number'
           }
         },
         example: {
           user: 'your user id',
-          type: 'loan'
+          type: 3,
+          balance: 500
         }
       },
       Product: {
@@ -298,6 +309,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['User'],
         summary: 'Get all users',
         description: 'Get all users',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         responses: {
           200: {
             description: 'Get all users',
@@ -326,6 +342,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['User'],
         summary: 'Get a user',
         description: 'Get a user',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -360,11 +381,16 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/user/email/{email}': {
+    '/api/user/get/{email}': {
       get: {
         tags: ['User'],
         summary: 'Get user by email',
         description: 'Get a user by their email address',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -399,11 +425,16 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/user/username/{username}': {
+    '/api/user/get/{username}': {
       get: {
         tags: ['User'],
         summary: 'Get user by username',
         description: 'Get a user by their username',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -530,6 +561,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['User'],
         summary: 'Delete a user',
         description: 'Delete a user',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -585,6 +621,45 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
+    '/api/product/get/{pin}': {
+      get: {
+        tags: ['Product'],
+        summary: 'Get a product',
+        description: 'Get a product by its pin',
+        parameters: [
+          {
+            in: 'path',
+            name: 'pin',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Product Pin'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get a product',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Product'
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
     '/api/product/get/{id}': {
       get: {
         tags: ['Product'],
@@ -629,6 +704,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Product'],
         summary: 'Create a product',
         description: 'Create a new product',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         requestBody: {
           content: {
             'application/json': {
@@ -654,11 +734,117 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
+    '/api/product/add-balance': {
+      post: {
+        tags: ['Product'],
+        summary: 'Add Balance',
+        description: 'Add balance to a product',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                format: 'application/json',
+                type: 'object',
+                properties: {
+                  pin: {
+                    type: 'string'
+                  },
+                  balance: {
+                    type: 'number'
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Add balance to a product'
+          },
+          400: {
+            description: 'Bad request'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/product/update/{id}': {
+      put: {
+        tags: ['Product'],
+        summary: 'Update a Product',
+        description:
+          'You need to login to update a Product and you can only update your own Product',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Product id'
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SaveProduct'
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Product updated successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Product'
+                }
+              }
+            }
+          },
+          400: {
+            description: 'Invalid request body or parameter'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Product not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
     '/api/product/delete/{id}': {
       delete: {
         tags: ['Product'],
         summary: 'Delete a product',
         description: 'Delete a product by its ID',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -691,6 +877,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Beneficiary'],
         summary: 'Get all beneficiaries',
         description: 'Get all beneficiaries',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         responses: {
           200: {
             description: 'Get all beneficiaries',
@@ -710,6 +901,267 @@ const swaggerDefinition: OAS3Definition = {
           },
           404: {
             description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/beneficiary/list/{sender}': {
+      get: {
+        tags: ['Beneficiary'],
+        summary: 'Get all beneficiaries',
+        description: 'Get all beneficiaries by sender',
+        parameters: [
+          {
+            in: 'path',
+            name: 'sender',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Sender id'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get all beneficiaries',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Beneficiary'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/Beneficiary/create': {
+      post: {
+        tags: ['Beneficiary'],
+        summary: 'Create a Beneficiary',
+        description: 'Create a Beneficiary',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SaveBeneficiary'
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Create a Beneficiary'
+          },
+          400: {
+            description: 'Bad request'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/Beneficiary/delete/{id}': {
+      delete: {
+        tags: ['Beneficiary'],
+        summary: 'Delete a Beneficiary',
+        description: 'Delete a Beneficiary',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Beneficiary id'
+          }
+        ],
+        responses: {
+          204: {
+            description: 'Delete a Beneficiary'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/list': {
+      get: {
+        tags: ['Payment'],
+        summary: 'Get all payments',
+        description: 'Get all payments',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get all payments',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Payment'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/list/{sender}': {
+      get: {
+        tags: ['Payment'],
+        summary: 'Get all payments by sender',
+        description: 'Get all payments',
+        parameters: [
+          {
+            in: 'path',
+            name: 'sender',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Sender id'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get all payments',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Payment'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/get/{id}': {
+      get: {
+        tags: ['Payment'],
+        summary: 'Get a payment',
+        description: 'Get a payment',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Payment id'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get a payment',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Payment'
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Payment not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/create': {
+      post: {
+        tags: ['Payment'],
+        summary: 'Create a Payment',
+        description: 'Create a Payment',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SavePayment'
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Create a Payment'
+          },
+          400: {
+            description: 'Bad request'
+          },
+          401: {
+            description: 'Unauthorized'
           },
           500: {
             description: 'Internal server error'
