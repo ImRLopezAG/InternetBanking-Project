@@ -4,7 +4,7 @@ import { BaseEntity } from './base.entity'
 import { User } from './user.model'
 
 export class Product extends BaseEntity {
-  @prop({ required: true })
+  @prop({ required: true, unique: true })
   declare pin: string
 
   @prop({ required: true })
@@ -13,7 +13,7 @@ export class Product extends BaseEntity {
   @prop({ required: true })
   declare expirationDate: string
 
-  @prop({ required: true })
+  @prop({ required: true, unique: true })
   declare cardNumber: string
 
   @prop({ required: true })
