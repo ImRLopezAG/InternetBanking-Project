@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { UserModel } from '../../domain/models'
-import { SECRET } from '../../utils/constants'
+import { SECRET, UserRole } from '../../utils/constants'
 
 interface ValidateUser {
   username: string
@@ -9,7 +9,7 @@ interface ValidateUser {
 }
 
 const services = UserModel
-export const validateUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
+export const userValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const { username, email }: ValidateUser = req.body
   const regexInvalidUserName = /[a-zA-Z0-9]/g
   const regexInvalidEmail = /\S+@\S+\.\S+/
@@ -46,11 +46,7 @@ export const validateUser = async (req: Request, res: Response, next: NextFuncti
   return next()
 }
 
-export const validateUpdateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | any> => {
+export const ownerValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const authHeader = req.headers.authorization
   const regexInvalidUserName = /[a-zA-Z0-9]/g
   const regexInvalidEmail = /\S+@\S+\.\S+/
@@ -108,7 +104,7 @@ export const validateUpdateUser = async (
   return next()
 }
 
-export const isAdmin = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
+export const adminValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const authHeader = req.headers.authorization
   if (authHeader?.split(' ')[0] !== 'Bearer') {
     return res.status(401).json({ error: 'Access denied, you need to login' })
@@ -121,10 +117,40 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction): 
   }
   try {
     const payload = jwt.verify(token, SECRET) as JwtPayload
-    const user = await services.findById(payload.uid)
-    if (user?.role !== 1) {
-      return res.status(401).json({ status: 401, message: 'You are not an Admin' })
+    const user = await services.findOne({ _id: payload.uid })
+    if (user?.role !== UserRole.ADMIN) {
+      return res
+        .status(401)
+        .json({ status: 401, message: 'You are not an Admin' })
     }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error)
+      return next(error)
+    }
+    return res.status(401).send('Unauthorized')
+  }
+  return next()
+}
+
+export const AuthValidation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | any> => {
+  const { authorization } = req.headers
+
+  try {
+    if (authorization?.split(' ')[0] !== 'Bearer') {
+      return res.status(401).json({ error: 'Access denied, you need to login' })
+    }
+    const token = authorization.split(' ')[1]
+    if (token === undefined) {
+      return res
+        .status(401)
+        .json({ status: 401, message: 'Access denied, you need to login' })
+    }
+    jwt.verify(token, SECRET) as JwtPayload
   } catch (error) {
     if (error instanceof Error) {
       console.log(error)
