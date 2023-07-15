@@ -19,4 +19,8 @@ export class ProductService extends GenericService<Product> implements IProductS
     product.balance += balance
     return await super.Update(product._id, product)
   }
+
+  async GetByOwner (owner: string): Promise<Product[]> {
+    return await ProductModel.find({ _id: owner })
+  }
 }
