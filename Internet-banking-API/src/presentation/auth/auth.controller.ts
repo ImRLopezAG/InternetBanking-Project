@@ -10,11 +10,7 @@ interface IAuth {
   password: string
 }
 
-export const authenticate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | any> => {
+export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const { username, password }: IAuth = req.body
   if (username === undefined || password === undefined) {
     return res.status(400).json({
@@ -42,7 +38,8 @@ export const authenticate = async (
       {
         sub: user.username,
         email: user.email,
-        uid: user.id
+        uid: user.id,
+        role: user.role
       },
       SECRET,
       {

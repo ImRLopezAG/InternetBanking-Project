@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
-import { GenericController, PaymentService } from '../../app/'
+import { GenericController, PaymentService } from '../../apps'
 import { Payment } from '../../domain'
 import { IPaymentController } from '../../interfaces'
 

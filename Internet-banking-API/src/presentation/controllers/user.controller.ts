@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import 'reflect-metadata'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
-import { GenericController, UserService } from '../../app/'
+import { GenericController, UserService } from '../../apps'
 import { Generate, ProductModel, User } from '../../domain'
 import { IUserController } from '../../interfaces'
 
@@ -16,11 +16,7 @@ export class UserController extends GenericController<User, UserService> impleme
     this.GetByUsername = this.GetByUsername.bind(this)
   }
 
-  async GetByEmail (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async GetByEmail (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const email = req.params.email
       email ?? res.status(400).json({ message: 'The email is required' })
@@ -44,11 +40,7 @@ export class UserController extends GenericController<User, UserService> impleme
     }
   }
 
-  async GetByUsername (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response | any> {
+  async GetByUsername (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const username = req.params.username
       username ?? res.status(400).json({ message: 'The username is required' })
@@ -78,31 +70,34 @@ export class UserController extends GenericController<User, UserService> impleme
     try {
       const schema = this.service.GetSchema()
 
-      for (const field of schema) {
-        if (field.allowNull === false && req.body[field.field] === undefined) {
+      schema.forEach((ent) => {
+        if (ent.allowNull === false && req.body[ent.field] === undefined) {
           return res
             .status(400)
-            .json({ message: `The field ${field.field} is required` })
+            .json({ message: `The field ${ent.field} is required` })
         }
-      }
-
-      const user = await this.service.Create(req.body)
-      const { balance } = req.body
-      const { pin, cvv, expirationDate, cardNumber, cardHolder } = Generate.card()
-
-      const product = new ProductModel({
-        pin,
-        cvv,
-        expirationDate,
-        cardNumber,
-        cardHolder,
-        user: user._id,
-        balance,
-        principal: true
       })
 
-      await product.save()
-      return res.status(201).json({ user, product })
+      const user = await this.service.Create(req.body)
+      if (user.role !== 1) {
+        const { balance } = req.body
+        const { pin, cvv, expirationDate, cardNumber, cardHolder } = Generate.card()
+
+        const product = new ProductModel({
+          pin,
+          cvv,
+          expirationDate,
+          cardNumber,
+          cardHolder,
+          user: user._id,
+          balance,
+          principal: true
+        })
+
+        await product.save()
+        return res.status(201).json({ user, product })
+      }
+      return res.status(201).json(user)
     } catch (error) {
       return next(error)
     }

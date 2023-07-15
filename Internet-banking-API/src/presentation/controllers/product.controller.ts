@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express'
 import 'reflect-metadata'
+import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
-import { GenericController, ProductService } from '../../app/'
+import { GenericController, ProductService } from '../../apps'
 import { Generate, Product } from '../../domain'
 import { IProductController } from '../../interfaces'
 
@@ -55,6 +55,19 @@ export class ProductController extends GenericController<Product, ProductService
       const { pin } = req.params
       const product = await this.service.GetByPin(pin)
       return res.status(200).json(product)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
+      return res.status(500).send('Internal server error')
+    }
+  }
+
+  async GetByOwner (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { owner } = req.params
+      const products = await this.service.GetByOwner(owner)
+      return res.status(200).json(products)
     } catch (error) {
       if (error instanceof Error) {
         return next(error)
