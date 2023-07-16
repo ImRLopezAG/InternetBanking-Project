@@ -205,6 +205,17 @@ unless you are authenticated as admin you can only get your own user and create 
 | `pin`      | `string` | **Required**. |
 
 from here all the endpoints need to be authenticated as admin
+
+### Get Product by owner
+  
+  ```
+    GET /api/product/list/${owner}
+  ```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `owner`      | `string` | **Required**. |
+
+you need to be authenticated as the owner of the product to get the list of products or as admin 
 ### Add Product
 
 ```

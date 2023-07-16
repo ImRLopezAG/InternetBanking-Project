@@ -598,6 +598,55 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Product'],
         summary: 'Get all products',
         description: 'Get all products',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get all products',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Product'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          }
+        }
+      }
+    },
+    '/api/product/list/:owner': {
+      get: {
+        tags: ['Product'],
+        summary: 'Get all products by owner',
+        description: 'Get all products owner',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'owner',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'User id'
+          }
+        ],
         responses: {
           200: {
             description: 'Get all products',
