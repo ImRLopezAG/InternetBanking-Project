@@ -16,7 +16,7 @@ export abstract class BaseEntity extends Document {
 
   toJSON (): object {
     const obj = this.toObject()
-    const { createdAt, updatedAt, password, __v, ...rest } = obj
+    const { updatedAt, password, __v, ...rest } = obj
     return rest
   }
 }
