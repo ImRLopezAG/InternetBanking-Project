@@ -8,6 +8,10 @@ interface ValidateUser {
   email: string
 }
 
+interface IAuth {
+  authorization: string
+}
+
 const services = UserModel
 export const userValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const { username, email }: ValidateUser = req.body
@@ -105,23 +109,18 @@ export const ownerValidation = async (req: Request, res: Response, next: NextFun
 }
 
 export const adminValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
-  const authHeader = req.headers.authorization
-  if (authHeader?.split(' ')[0] !== 'Bearer') {
-    return res.status(401).json({ error: 'Access denied, you need to login' })
-  }
-  const token = authHeader.split(' ')[1]
-  if (token === undefined) {
-    return res
-      .status(401)
-      .json({ status: 401, message: 'Access denied, you need to login' })
-  }
+  const { authorization } = req.headers
   try {
-    const payload = jwt.verify(token, SECRET) as JwtPayload
-    const user = await services.findOne({ _id: payload.uid })
-    if (user?.role !== UserRole.ADMIN) {
-      return res
-        .status(401)
-        .json({ status: 401, message: 'You are not an Admin' })
+    if (authorization === undefined) return res.status(401).json({ error: 'Access denied, you need to login' })
+    const payload = jwtValid({ authorization })
+    if (payload.message) {
+      return res.status(401).json({ error: payload.message })
+    }
+    if (payload.role !== UserRole.ADMIN) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Access denied, you need to login'
+      })
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -133,24 +132,19 @@ export const adminValidation = async (req: Request, res: Response, next: NextFun
   return next()
 }
 
-export const AuthValidation = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<Response | any> => {
+export const AuthValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
   const { authorization } = req.headers
 
   try {
-    if (authorization?.split(' ')[0] !== 'Bearer') {
-      return res.status(401).json({ error: 'Access denied, you need to login' })
+    console.log(req.headers)
+    if (authorization === undefined) {
+      return res.status(401).json({ error: 'Access denied, you need to authenticate' })
     }
-    const token = authorization.split(' ')[1]
-    if (token === undefined) {
-      return res
-        .status(401)
-        .json({ status: 401, message: 'Access denied, you need to login' })
+
+    const payload = jwtValid({ authorization })
+    if (payload.message) {
+      return res.status(401).json({ error: payload.message })
     }
-    jwt.verify(token, SECRET) as JwtPayload
   } catch (error) {
     if (error instanceof Error) {
       console.log(error)
@@ -159,4 +153,51 @@ export const AuthValidation = async (
     return res.status(401).send('Unauthorized')
   }
   return next()
+}
+
+export const senderValidation = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
+  const { sender } = req.params
+  const { authorization } = req.headers
+  const senderBody = req.body.sender
+  const users = await services.find().exec()
+  try {
+    if (authorization === undefined) return res.status(401).json({ error: 'Access denied, you need to login' })
+
+    if (users.some(user => user.id === sender || user.id === senderBody)) {
+      return res.status(400).json({ error: 'Sender is invalid' })
+    }
+
+    const payload = jwtValid({ authorization })
+    if (payload.message) {
+      return res.status(401).json({ error: payload.message })
+    }
+    if (payload.uid !== sender || payload.uid !== senderBody) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Access denied, you login with your own account'
+      })
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      return next(error)
+    }
+    return res.status(401).send('Unauthorized')
+  }
+  return next()
+}
+
+const jwtValid = ({ authorization }: IAuth): JwtPayload => {
+  const token = authorization.split(' ')[1]
+  const payload = jwt.verify(token, SECRET) as JwtPayload
+
+  if (authorization?.split(' ')[0] !== 'Bearer') {
+    payload.message = 'Access denied, use an authorization token'
+    return payload
+  }
+
+  if (token === undefined) {
+    payload.message = 'Access denied, you need to login'
+    return payload
+  }
+  return payload
 }
