@@ -1,5 +1,5 @@
-import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
+import 'reflect-metadata'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, ProductService } from '../../apps'
 import { Generate, Product } from '../../domain'
@@ -20,6 +20,20 @@ export class ProductController extends GenericController<Product, ProductService
   override async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const entity: Product = req.body
+
+      const { limit } = req.body
+
+      if (!entity.user || !entity.type) {
+        return res.status(400).send(`${!entity.user ? 'User' : 'Type'} is required`)
+      }
+
+      if (entity.type === AccountType.CREDIT && !limit) {
+        return res.status(400).send('Limit is required for credit accounts')
+      }
+
+      if (limit && entity.type !== AccountType.CREDIT) {
+        return res.status(400).send('Limit is only for credit accounts')
+      }
       const { cardNumber, pin, cvv, expirationDate, cardHolder } = Generate.card()
 
       entity.cardNumber = cardNumber
@@ -27,12 +41,7 @@ export class ProductController extends GenericController<Product, ProductService
       entity.cvv = cvv
       entity.expirationDate = expirationDate
       entity.cardHolder = cardHolder
-
-      const { limit } = req.body
-
-      if (limit && entity.type !== AccountType.CREDIT) {
-        return res.status(400).send('Limit is only for credit accounts')
-      }
+      entity.balance = entity.type !== AccountType.CREDIT ? entity.balance : limit
 
       return await super.Create(req, res, next)
     } catch (error) {

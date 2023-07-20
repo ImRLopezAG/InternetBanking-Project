@@ -14,6 +14,7 @@ export class PaymentController extends GenericController<Payment, PaymentService
     this.service = service
     this.GetBySender = this.GetBySender.bind(this)
     this.LoanPayment = this.LoanPayment.bind(this)
+    this.CreditPayment = this.CreditPayment.bind(this)
   }
 
   async GetBySender (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
