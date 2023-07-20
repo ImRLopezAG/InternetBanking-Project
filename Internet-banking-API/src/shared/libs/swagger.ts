@@ -682,6 +682,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Product'],
         summary: 'Get a product',
         description: 'Get a product by its pin',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -721,6 +726,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Product'],
         summary: 'Get a product',
         description: 'Get a product by its ID',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -969,6 +979,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Beneficiary'],
         summary: 'Get all beneficiaries',
         description: 'Get all beneficiaries by sender',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -1011,6 +1026,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Beneficiary'],
         summary: 'Create a Beneficiary',
         description: 'Create a Beneficiary',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         requestBody: {
           content: {
             'application/json': {
@@ -1114,6 +1134,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Payment'],
         summary: 'Get all payments by sender',
         description: 'Get all payments',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         parameters: [
           {
             in: 'path',
@@ -1200,6 +1225,11 @@ const swaggerDefinition: OAS3Definition = {
         tags: ['Payment'],
         summary: 'Create a Payment',
         description: 'Create a Payment',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
         requestBody: {
           content: {
             'application/json': {

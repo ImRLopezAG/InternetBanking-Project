@@ -76,6 +76,8 @@ Documentation: Swagger
   authorization: Bearer ${token}
 ```
 
+all the endpoints need to be authenticated with a token except the login and the register
+
 #### Log In
 
 ```
@@ -204,8 +206,7 @@ unless you are authenticated as admin you can only get your own user and create 
 | :-------- | :------- | :-------------------------------- |
 | `pin`      | `string` | **Required**. |
 
-from here all the endpoints need to be authenticated as admin
-
+\
 ### Get Product by owner
   
   ```
