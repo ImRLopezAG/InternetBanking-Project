@@ -1,5 +1,6 @@
 import { Payment, PaymentModel, ProductModel } from '../../domain'
 import { IPaymentService } from '../../interfaces'
+import { AccountType } from '../../utils'
 import { GenericService } from '../core'
 export class PaymentService extends GenericService<Payment> implements IPaymentService {
   constructor () {
@@ -10,13 +11,16 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
     const { sender, receptor, amount } = entity
     const senderProduct = await ProductModel.findOne({ pin: sender })
     const receptorProduct = await ProductModel.findOne({ pin: receptor })
+    const taxes = amount + (amount * 0.18)
+
     if (!senderProduct || !receptorProduct) {
       throw Error('BR: Product not found')
     }
-    if (senderProduct.balance < amount) {
+    if (senderProduct.balance < taxes) {
       throw new Error('BR: Insufficient funds')
     }
-    senderProduct.balance -= amount
+
+    senderProduct.balance -= taxes
     receptorProduct.balance += amount
 
     await ProductModel.findByIdAndUpdate(senderProduct._id, senderProduct)
@@ -26,5 +30,77 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
 
   async GetBySender (sender: string): Promise<Payment[]> {
     return await PaymentModel.find({ sender }).exec()
+  }
+
+  async LoanPayment (entity: Payment): Promise<Payment> {
+    const { sender, amount, receptor } = entity
+
+    const product = await ProductModel.findOne({ pin: sender })
+    const loan = await ProductModel.findOne({ pin: receptor })
+
+    const taxes = amount + (amount * 0.18)
+
+    if (product === null || loan === null) {
+      throw new Error('BR: Product not found')
+    }
+
+    if (loan.type !== AccountType.LOAN) {
+      throw new Error('BR: Invalid product')
+    }
+
+    if (product.balance < taxes) {
+      throw new Error('BR: Insufficient funds')
+    }
+
+    if (product.type === AccountType.CREDIT && product.limit < loan.balance + (loan.balance * 0.18)) {
+      throw new Error('BR: Insufficient funds')
+    }
+
+    if (loan.balance < amount) {
+      product.balance -= loan.balance
+      loan.balance = 0
+      loan.active = false
+    } else {
+      product.balance -= taxes
+      loan.balance -= amount
+    }
+
+    await ProductModel.findByIdAndUpdate(product._id, product)
+    await ProductModel.findByIdAndUpdate(loan._id, loan)
+
+    return await super.Create(entity)
+  }
+
+  async CreditPayment (entity: Payment): Promise<Payment> {
+    const { sender, amount, receptor } = entity
+
+    const product = await ProductModel.findOne({ pin: sender })
+    const credit = await ProductModel.findOne({ pin: receptor })
+
+    const taxes = amount + (amount * 0.18)
+
+    if (product === null || credit === null) {
+      throw new Error('BR: Product not found')
+    }
+
+    if (product.type === AccountType.CREDIT || product.type === AccountType.LOAN) {
+      throw new Error('BR: Invalid product')
+    }
+
+    if (product.balance < taxes) {
+      throw new Error('BR: Insufficient funds')
+    }
+
+    if (credit.limit < amount) {
+      product.balance -= credit.limit + (credit.limit * 0.18)
+      credit.balance = credit.limit
+    } else {
+      product.balance -= taxes
+      credit.balance += amount
+    }
+
+    await ProductModel.findByIdAndUpdate(product._id, product)
+    await ProductModel.findByIdAndUpdate(credit._id, credit)
+    return await super.Create(entity)
   }
 }

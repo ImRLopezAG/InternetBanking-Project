@@ -4,6 +4,7 @@ import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, ProductService } from '../../apps'
 import { Generate, Product } from '../../domain'
 import { IProductController } from '../../interfaces'
+import { AccountType } from '../../utils'
 
 @injectable()
 @scoped(Lifecycle.ContainerScoped)
@@ -26,6 +27,12 @@ export class ProductController extends GenericController<Product, ProductService
       entity.cvv = cvv
       entity.expirationDate = expirationDate
       entity.cardHolder = cardHolder
+
+      const { limit } = req.body
+
+      if (limit && entity.type !== AccountType.CREDIT) {
+        return res.status(400).send('Limit is only for credit accounts')
+      }
 
       return await super.Create(req, res, next)
     } catch (error) {

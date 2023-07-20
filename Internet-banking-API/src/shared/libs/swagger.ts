@@ -142,6 +142,10 @@ const swaggerDefinition: OAS3Definition = {
           },
           balance: {
             type: 'number'
+          },
+          limit: {
+            type: 'number',
+            description: 'Only for credit cards'
           }
         },
         example: {
@@ -176,6 +180,9 @@ const swaggerDefinition: OAS3Definition = {
           },
           balance: {
             type: 'number'
+          },
+          active: {
+            type: 'boolean'
           },
           type: {
             type: 'string',
@@ -1205,6 +1212,100 @@ const swaggerDefinition: OAS3Definition = {
         responses: {
           201: {
             description: 'Create a Payment'
+          },
+          400: {
+            description: 'Bad request'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/loan': {
+      post: {
+        tags: ['Payment'],
+        summary: 'Loan Payment',
+        description: 'Loan Payment',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                format: 'application/json',
+                type: 'object',
+                properties: {
+                  sender: {
+                    type: 'string'
+                  },
+                  receptor: {
+                    type: 'string'
+                  },
+                  amount: {
+                    type: 'number'
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Loan Payment'
+          },
+          400: {
+            description: 'Bad request'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/credit': {
+      post: {
+        tags: ['Payment'],
+        summary: 'Credit Payment',
+        description: 'Credit Payment',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                format: 'application/json',
+                type: 'object',
+                properties: {
+                  sender: {
+                    type: 'string'
+                  },
+                  receptor: {
+                    type: 'string'
+                  },
+                  amount: {
+                    type: 'number'
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Loan Payment'
           },
           400: {
             description: 'Bad request'

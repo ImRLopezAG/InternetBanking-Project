@@ -13,6 +13,7 @@ export class PaymentController extends GenericController<Payment, PaymentService
     super(service)
     this.service = service
     this.GetBySender = this.GetBySender.bind(this)
+    this.LoanPayment = this.LoanPayment.bind(this)
   }
 
   async GetBySender (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
@@ -24,6 +25,30 @@ export class PaymentController extends GenericController<Payment, PaymentService
       if (error instanceof Error) {
         return next(error)
       }
+    }
+  }
+
+  async LoanPayment (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const payment = await this.service.LoanPayment(req.body)
+      return res.status(200).json(payment)
+    } catch (error: any) {
+      if (error.name === 'MongoServerError' || error.message.startsWith('BR:')) {
+        return res.status(400).json({ message: error.message })
+      }
+      return next(error)
+    }
+  }
+
+  async CreditPayment (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const payment = await this.service.CreditPayment(req.body)
+      return res.status(200).json(payment)
+    } catch (error: any) {
+      if (error.name === 'MongoServerError' || error.message.startsWith('BR:')) {
+        return res.status(400).json({ message: error.message })
+      }
+      return next(error)
     }
   }
 }

@@ -28,6 +28,9 @@ export class Product extends BaseEntity {
   @prop({ required: true, default: 0 })
   declare limit: number
 
+  @prop({ required: true, default: true })
+  declare active: boolean
+
   @prop({ enum: AccountType, default: AccountType.SAVING })
   declare type: AccountType
 

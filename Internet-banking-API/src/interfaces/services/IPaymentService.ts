@@ -2,6 +2,7 @@ import { Payment } from '../../domain/models'
 import { IGenericService } from '../../utils/constants'
 
 export interface IPaymentService extends IGenericService<Payment> {
-  // Add your custom methods here
   GetBySender: (sender: string) => Promise<Payment[]>
+  LoanPayment: (entity: Payment) => Promise<Payment>
+  CreditPayment: (entity: Payment) => Promise<Payment>
 }

@@ -359,6 +359,34 @@ you need to be authenticated as the sender of the payment or as admin
 | `sender`        | `string` | **Required**. |
 | `receptor`        | `string` | **Required**. |
 | `amount`        | `number` | **Required**. |
+### Add Payment
+
+the sender of the payment works as the product where the money is going to be taken
+and the receptor is the product where the money is going to be added or payed
+
+```
+  Post /api/payment/loan
+```
+
+| Body          | Type     | Description   |
+| :------------ | :------- | :------------ |
+| `sender`        | `string` | **Required**. |
+| `receptor`        | `string` | **Required**. |
+| `amount`        | `number` | **Required**. |
+### Add Payment
+
+the sender of the payment works as the product where the money is going to be taken
+and the receptor is the product where the money is going to be added or payed
+
+```
+  Post /api/payment/credit
+```
+
+| Body          | Type     | Description   |
+| :------------ | :------- | :------------ |
+| `sender`        | `string` | **Required**. |
+| `receptor`        | `string` | **Required**. |
+| `amount`        | `number` | **Required**. |
 
 
 
