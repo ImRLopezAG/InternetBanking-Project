@@ -5,17 +5,22 @@ interface Card {
   expirationDate: string
   cardHolder: string
 }
+
+interface Cards {
+  [key: string]: RegExp
+}
 export class Generate {
   static cardNumber (): string {
-    let cardNumber = Array.from({ length: 16 }, () =>
-      this.next(0, 10).toString()
-    )
+    const cards: Cards = this.generateCards()
+    let cardNumber: string
+    let cardHolder: string
 
-    while (this.cardHolder(cardNumber.join('')) === 'Unknown') {
-      cardNumber = Array.from({ length: 16 }, () => this.next(0, 10).toString())
-    }
+    do {
+      cardNumber = Array.from({ length: 16 }, () => this.next(0, 9).toString()).join('')
+      cardHolder = this.cardHolder(cardNumber.replace(/\s/g, ''), cards)
+    } while (cardHolder === 'Unknown')
 
-    return this.formatCardNumber(cardNumber.join(''))
+    return this.formatCardNumber(cardNumber)
   }
 
   static pin (): string {
@@ -33,22 +38,21 @@ export class Generate {
     return `${month.toString().padStart(2, '0')}/${year.toString()}`
   }
 
-  static cardHolder (cardNumber: string): string {
-    if (
-      cardNumber.substring(0, 2) === '34' ||
-      cardNumber.substring(0, 2) === '37'
-    ) {
-      return 'American Express'
+  static generateCards (): Cards {
+    return {
+      Visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
+      MasterCard: /^5[1-5][0-9]{14}$/,
+      AmericanExpress: /^3[47][0-9]{13}$/,
+      DinersClub: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
+      Discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
+      JCB: /^(?:2131|1800|35\d{3})\d{11}$/,
+      Maestro: /^(5018|5020|5038|6304|6759|6761|6763)[0-9]{8,15}$/,
+      UnionPay: /^(62[0-9]{14,17})$/
     }
+  }
 
-    switch (cardNumber[0]) {
-      case '4':
-        return 'Visa'
-      case '5':
-        return 'MasterCard'
-      default:
-        return 'Unknown'
-    }
+  static cardHolder (cardNumber: string, cards: Cards): string {
+    return Object.keys(cards).find((card) => cards[card].test(cardNumber.replace(/\s/g, ''))) ?? 'Unknown'
   }
 
   private static formatCardNumber (cardNumber: string): string {
@@ -65,7 +69,7 @@ export class Generate {
       pin: this.pin(),
       cvv: this.cvv(),
       expirationDate: this.expirationDate(),
-      cardHolder: this.cardHolder(this.cardNumber())
+      cardHolder: this.cardHolder(this.cardNumber(), this.generateCards())
     }
   }
 }

@@ -311,6 +311,93 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
+    '/api/auth/sign-up': {
+      post: {
+        tags: ['Authentication'],
+        summary: 'Create a user',
+        description: 'Create a user',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SaveUser'
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Create a user'
+          },
+          400: {
+            description: 'Bad request'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/auth/update/{id}': {
+      put: {
+        tags: ['Authentication'],
+        summary: 'Update a user',
+        description:
+          'You need to login to update a user and you can only update your own user',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'User id'
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SaveUser'
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'User updated successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/User'
+                }
+              }
+            }
+          },
+          400: {
+            description: 'Invalid request body or parameter'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'User not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
     '/api/user/list': {
       get: {
         tags: ['User'],
@@ -476,93 +563,6 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/user/create': {
-      post: {
-        tags: ['Authentication'],
-        summary: 'Create a user',
-        description: 'Create a user',
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/SaveUser'
-              }
-            }
-          }
-        },
-        responses: {
-          201: {
-            description: 'Create a user'
-          },
-          400: {
-            description: 'Bad request'
-          },
-          401: {
-            description: 'Unauthorized'
-          },
-          500: {
-            description: 'Internal server error'
-          }
-        }
-      }
-    },
-    '/api/user/update/{id}': {
-      put: {
-        tags: ['User'],
-        summary: 'Update a user',
-        description:
-          'You need to login to update a user and you can only update your own user',
-        security: [
-          {
-            Bearer: []
-          }
-        ],
-        parameters: [
-          {
-            in: 'path',
-            name: 'id',
-            schema: {
-              type: 'string'
-            },
-            required: true,
-            description: 'User id'
-          }
-        ],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/SaveUser'
-              }
-            }
-          }
-        },
-        responses: {
-          200: {
-            description: 'User updated successfully',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/User'
-                }
-              }
-            }
-          },
-          400: {
-            description: 'Invalid request body or parameter'
-          },
-          401: {
-            description: 'Unauthorized'
-          },
-          404: {
-            description: 'User not found'
-          },
-          500: {
-            description: 'Internal server error'
-          }
-        }
-      }
-    },
     '/api/user/delete/{id}': {
       delete: {
         tags: ['User'],
@@ -633,7 +633,7 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/product/list/:owner': {
+    '/api/product/list/{owner}': {
       get: {
         tags: ['Product'],
         summary: 'Get all products by owner',
