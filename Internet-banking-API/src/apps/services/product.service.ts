@@ -21,6 +21,6 @@ export class ProductService extends GenericService<Product> implements IProductS
   }
 
   async GetByOwner (owner: string): Promise<Product[]> {
-    return await ProductModel.find({ _id: owner })
+    return await ProductModel.find({ user: owner })
   }
 }
