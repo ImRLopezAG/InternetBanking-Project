@@ -136,7 +136,6 @@ export const AuthValidation = async (req: Request, res: Response, next: NextFunc
   const { authorization } = req.headers
 
   try {
-    console.log(req.headers)
     if (authorization === undefined) {
       return res.status(401).json({ error: 'Access denied, you need to authenticate' })
     }

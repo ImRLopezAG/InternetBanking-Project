@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express'
 import 'reflect-metadata'
+import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, UserService } from '../../apps'
 import { Generate, ProductModel, User } from '../../domain'
