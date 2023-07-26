@@ -1,0 +1,1 @@
+export 'package:internet_banking/src/domain/models/models.dart';

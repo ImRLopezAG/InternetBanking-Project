@@ -1,0 +1,63 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:internet_banking/src/src.dart';
+
+class AuthRepository {
+  String baseUrl = 'http://localhost:3000/api/auth';
+
+  Future<AuthResponse> login(AuthRequest request) async {
+    final response = await http.post(Uri.https(baseUrl, '/login'), body: {
+      'username': request.username,
+      'password': request.password,
+    });
+    if (response.statusCode == 200) {
+      return AuthResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to login');
+    }
+  }
+
+  Future<UserModel> register({required UserModel user}) async {
+    final response = await http.post(Uri.https(baseUrl, '/register'),
+        body: jsonEncode(user.toJson()),
+        headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 201) {
+      return UserModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to register');
+    }
+  }
+
+  Future<UserModel> update({required UserModel user, required String token }) async {
+    final response = await http.put(Uri.https(baseUrl, '/update'),
+        body: jsonEncode(user.toJson()),
+        headers:{
+          'authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        });
+    if (response.statusCode == 200) {
+      return UserModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to update');
+    }
+  }
+}
+
+class AuthResponse {
+  final String? token;
+  final String? message;
+
+  AuthResponse({this.token, this.message});
+
+  AuthResponse.fromJson(Map<String, dynamic> json)
+      : token = json['token'],
+        message = json['message'];
+}
+
+class AuthRequest {
+  final String? username;
+  final String? password;
+
+  AuthRequest({this.username, this.password});
+}
