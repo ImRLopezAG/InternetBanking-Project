@@ -12,8 +12,5 @@
       "src": "/(.*)",
       "dest": "index.ts"
     }
-  ],
-  "buildCommand": "pnpm run build",
-  "devCommand": "pnpm run dev",
-  "startCommand": "pnpm run start"
+  ]
 }
