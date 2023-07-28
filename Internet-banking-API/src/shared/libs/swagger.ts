@@ -15,7 +15,7 @@ const swaggerDefinition: OAS3Definition = {
   },
   servers: [
     {
-      url: `${PORT.startsWith('https') ? PORT : `http://localhost:${PORT}`}`
+      url: `${PORT === '200' ? 'https://internetbanking-api.up.railway.app/' : `http://localhost:${PORT}`}`
     }
   ],
   components: {
