@@ -1,42 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:internet_banking/src/src.dart';
 void main() {
-  runApp(const MainApp());
+  runApp(const AppState());
 }
 
-
-class AppState extends StatelessWidget {
-  const AppState({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<MovieProvider>(
-          create: (_) => MovieProvider(),
-          lazy: false,
-        ),
-        ChangeNotifierProvider<CastProvider>(
-          create: (_) => CastProvider(),
-          lazy: false,
-        ),
-        ChangeNotifierProvider<VideoProvider>(
-          create: (_) => VideoProvider(),
-          lazy: false,
-        ),
-        ChangeNotifierProvider<AppProvider>(
-          create: (_) => AppProvider(),
-          lazy: false,
-        ),
-        ChangeNotifierProvider<ShowProvider>(
-          create: (_) => ShowProvider(),
-          lazy: false,
-        ),
-      ],
-      child: const MainApp(),
-    );
-  }
-}
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -48,6 +16,39 @@ class MainApp extends StatelessWidget {
           child: Text('Hello World!'),
         ),
       ),
+    );
+  }
+}
+
+class AppState extends StatelessWidget {
+  const AppState({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppProvider>(
+          create: (_) => AppProvider(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider<UserProvider>(
+          create: (_) => UserProvider(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider<PaymentProvider>(
+          create: (_) => PaymentProvider(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider<ProductProvider>(
+          create: (_) => ProductProvider(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider<BeneficiaryProvider>(
+          create: (_) => BeneficiaryProvider(),
+          lazy: false,
+        ),
+      ],
+      child: const MainApp(),
     );
   }
 }
