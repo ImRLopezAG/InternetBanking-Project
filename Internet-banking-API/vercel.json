@@ -13,8 +13,7 @@
       "dest": "index.ts"
     }
   ],
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "startCommand": "npm run start"
-
+  "buildCommand": "pnpm run build",
+  "devCommand": "pnpm run dev",
+  "startCommand": "pnpm run start"
 }
