@@ -11,7 +11,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        node-version: [18.x]
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -28,5 +31,5 @@ jobs:
     - name: Deploy
       uses: actions/upload-artifact@v2
       with:
-        name: dist/
+        name: dist
         path: Internet-banking-API/dist
