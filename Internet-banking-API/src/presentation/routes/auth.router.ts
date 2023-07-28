@@ -9,5 +9,5 @@ export const auth = Router()
 const controller: UserController = container.resolve(UserController)
 
 auth.post('/sign-up', userValidation, controller.Create)
-auth.put('/update/:id', userValidation, ownerValidation, controller.Update)
+auth.put('/update/:id', ownerValidation, userValidation, controller.Update)
 auth.post('/Login', authenticate)

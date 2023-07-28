@@ -38,7 +38,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
       {
         sub: user.username,
         email: user.email,
-        uid: user.id,
+        uid: user._id,
         role: user.role
       },
       SECRET,
