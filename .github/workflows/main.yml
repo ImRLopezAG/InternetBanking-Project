@@ -1,0 +1,26 @@
+name: Build app
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+
+    - name: Install dependencies
+      run: pnpm install
+      working-directory: Internet-banking-API
+
+    - name: Build
+      run: pnpm run build
+      working-directory: Internet-banking-API
