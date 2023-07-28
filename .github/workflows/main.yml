@@ -33,3 +33,4 @@ jobs:
       with:
         name: dist 
         path: Internet-banking-API/dist
+        retention-days: 1
