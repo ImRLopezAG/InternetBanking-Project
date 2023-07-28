@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
@@ -6,7 +6,7 @@ import * as router from './presentation/routes'
 import { BASE } from './utils'
 import { authValidation, errorHandler } from './presentation/middleware'
 
-const app: Application = express()
+const app = express()
 
 app.use(cors({ origin: true, credentials: true }))
 app.use(bodyParser.json())
