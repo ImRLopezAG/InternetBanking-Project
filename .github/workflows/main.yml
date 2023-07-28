@@ -28,16 +28,6 @@ jobs:
       run: npm install
       working-directory: Internet-banking-API
 
-    - name: Build
-      run: npm run build
-      working-directory: Internet-banking-API
-
-    - name: Uplad Build
-      uses: actions/upload-artifact@v3
-      with:
-        name: build
-        path: Internet-banking-API/dist
-
     - name: Download Build
       uses: actions/download-artifact@v3
       with:
