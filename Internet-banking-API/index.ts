@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { createServer } from 'http'
 import app from './src/app'
 import { DbContext, UserModel } from './src/domain'
 import { PORT } from './src/utils'
@@ -22,7 +23,7 @@ DbContext()
     }).catch((err) => {
       console.log(err)
     })
-    app.listen(PORT, () => {
+    createServer(app).listen(PORT, () => {
       console.log(
             `Server started on port: ${
               PORT.startsWith('https') ? PORT : `http://localhost:${PORT}`
