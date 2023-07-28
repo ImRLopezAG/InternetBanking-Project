@@ -11,6 +11,6 @@ docs.get(
   '/',
   swaggerUi.setup(swaggerSetup, {
     customSiteTitle: 'Internet - Banking  API Docs',
-    customCss: `.swagger-ui .topbar { display: none } ${theme}`
+    customCss: `.swagger-ui .topbar { display: none } .description{ display: none } .info__contact{ display: none } ${theme}`
   })
 )
