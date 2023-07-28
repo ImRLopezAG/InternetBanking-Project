@@ -18,9 +18,9 @@ jobs:
 
 
     - name: Install dependencies
-      run: pnpm install
+      run: npm install
       working-directory: Internet-banking-API
 
     - name: Build
-      run: pnpm run build
+      run: npm run build
       working-directory: Internet-banking-API
