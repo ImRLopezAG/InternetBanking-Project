@@ -23,8 +23,8 @@ const swaggerDefinition: OAS3Definition = {
       url: 'https://internet-banking-api.vercel.app/'
     },
     {
-      description: 'Production vercel server',
-      url: 'https://internet-banking-imr-lopez-ag.vercel.app/'
+      description: 'Development vercel server',
+      url: 'https://dev-internet-banking-imr-lopez-ag.vercel.app/'
     }
   ],
   components: {
