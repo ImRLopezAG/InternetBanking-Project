@@ -10,10 +10,9 @@
     "add-build": "git add dist",
     "test": "node --test --import=module"
   },
-  "pre-commit": [
-    "build",
-    "add-build"
-  ],
+  "precommit": {
+    "run": "build"
+  },
   "keywords": [],
   "dependencies": {
     "@typegoose/typegoose": "^11.4.0",
