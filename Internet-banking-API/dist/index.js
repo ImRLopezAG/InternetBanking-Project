@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-unused-vars */
-const http_1 = require("http");
 const app_1 = __importDefault(require("./src/app"));
 const domain_1 = require("./src/domain");
 const utils_1 = require("./src/utils");
@@ -26,7 +25,7 @@ const utils_1 = require("./src/utils");
     }).catch((err) => {
         console.log(err);
     });
-    (0, http_1.createServer)(app_1.default).listen(utils_1.PORT, () => {
+    app_1.default.listen(utils_1.PORT, () => {
         console.log(`Server started on port: ${utils_1.PORT.startsWith('https') ? utils_1.PORT : `http://localhost:${utils_1.PORT}`}`);
     });
 })
