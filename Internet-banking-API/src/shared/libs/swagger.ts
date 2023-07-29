@@ -19,8 +19,8 @@ const swaggerDefinition: OAS3Definition = {
       url: `http://localhost:${PORT}`
     },
     {
-      description: 'Production railway server',
-      url: 'https://internetbanking-api.up.railway.app/'
+      description: 'Production vercel server',
+      url: 'https://internet-banking-api.vercel.app/'
     }
   ],
   components: {
