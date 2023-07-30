@@ -4,10 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:internet_banking/src/src.dart';
 
 class AuthRepository {
-  String baseUrl = 'http://localhost:3000/api/auth';
+  String? baseUrl = Env.baseUrl!;
+  final _endpoint = 'api/auth/';
 
   Future<AuthResponse> login(AuthRequest request) async {
-    final response = await http.post(Uri.https(baseUrl, '/login'), body: {
+    final response = await http.post(Uri.https(baseUrl!, '${_endpoint}login'), body: {
       'username': request.username,
       'password': request.password,
     });
@@ -19,7 +20,7 @@ class AuthRepository {
   }
 
   Future<UserModel> register({required UserModel user}) async {
-    final response = await http.post(Uri.https(baseUrl, '/register'),
+    final response = await http.post(Uri.https(baseUrl!, '${_endpoint}register'),
         body: jsonEncode(user.toJson()),
         headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 201) {
@@ -29,10 +30,11 @@ class AuthRepository {
     }
   }
 
-  Future<UserModel> update({required UserModel user, required String token }) async {
-    final response = await http.put(Uri.https(baseUrl, '/update'),
+  Future<UserModel> update(
+      {required UserModel user, required String token}) async {
+    final response = await http.put(Uri.https(baseUrl!, '/update'),
         body: jsonEncode(user.toJson()),
-        headers:{
+        headers: {
           'authorization': 'Bearer $token',
           'Content-Type': 'application/json'
         });
@@ -60,4 +62,9 @@ class AuthRequest {
   final String? password;
 
   AuthRequest({this.username, this.password});
+
+  Map<String, dynamic> toJson() => {
+        'username': username,
+        'password': password,
+      };
 }

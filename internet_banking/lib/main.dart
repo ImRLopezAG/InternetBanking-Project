@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:internet_banking/src/src.dart';
-void main() {
+
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const AppState());
 }
 
@@ -10,12 +14,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      title: 'Internet Banking',
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/login',
+      theme: AppTheme.darkTheme,
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/sig-in': (context) => const SigInScreen(),
+      },
     );
   }
 }
@@ -52,5 +60,3 @@ class AppState extends StatelessWidget {
     );
   }
 }
-
-
