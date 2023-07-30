@@ -21,14 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       key: _drawerKey,
-      appBar: AppBar(
-        leading: InkWell(
-          onTap: () => _drawerKey.currentState!.openDrawer(),
-          child: const Icon(Icons.menu_rounded),
-        ),
-        title: const Text('Home'),
-        centerTitle: true,
-      ),
+      appBar:
+          TopBar(drawerKey: _drawerKey, title: _titles[appProvider.homeIndex]),
+      drawer: SideMenu(onTap: _setWidgets),
       body: FutureBuilder<bool>(
         future: appProvider.setUser(),
         builder: (context, snapshot) {
@@ -44,78 +39,66 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        height: 70.0,
+        decoration: BoxDecoration(
+          color: Colors.blue[900]!,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(
+              49.0,
+            ),
+            topRight: Radius.circular(
+              49.0,
+            ),
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.send_rounded), label: 'Transfer'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.payment_rounded), label: 'Payment'),
-        ],
-        currentIndex: appProvider.homeIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          appProvider.homeIndex = index;
-          setState(() {});
-        },
-      ),
-      drawer: SideMenu(
-        onTap: _setWidgets,
+        ),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+          child: BottomNavigationBar(
+            currentIndex: appProvider.homeIndex,
+            onTap: _setWidgets,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            selectedIconTheme: const IconThemeData(
+              color: Colors.white,
+              size: 30.0,
+            ),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_rounded),
+                label: 'User',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.send_rounded),
+                label: 'Transfer',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.payment_rounded),
+                label: 'Payment',
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   final _widgets = [
-    const Text('Home'),
-    const Text('Transfer'),
-    const Text('Payment'),
-    const Text('Beneficiary'),
+    const UserScreen(),
+    const TransferScreen(),
+    const PaymentScreen(),
   ];
-
+  final _titles = [
+    'Home',
+    'Transfer',
+    'Payment',
+  ];
   void _setWidgets(int index) {
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     appProvider.homeIndex = index;
     setState(() {});
-  }
-}
-
-class SideMenu extends StatelessWidget {
-  final Function(int) onTap;
-  const SideMenu({super.key, required this.onTap});
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ClipRRect(
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.people_rounded),
-              title: const Text('Beneficiary'),
-              onTap: () {
-                onTap(3);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout_rounded),
-              title: const Text('Logout'),
-              onTap: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/login', (route) => false);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

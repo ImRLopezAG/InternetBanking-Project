@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:internet_banking/src/src.dart';
+import 'package:provider/provider.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({super.key});
@@ -10,6 +11,7 @@ class UserForm extends StatefulWidget {
 
 class _UserFormState extends State<UserForm> {
   final _formKey = GlobalKey<FormState>();
+  final _dropDownKey = GlobalKey<FormFieldState>();
 
   final Map<String, TextEditingController> _controllers = {
     'username': TextEditingController(),
@@ -25,8 +27,12 @@ class _UserFormState extends State<UserForm> {
     'client': 2,
   };
 
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -99,41 +105,43 @@ class _UserFormState extends State<UserForm> {
                 ),
                 controller: _controllers['email']!,
               ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                  labelText: 'Role',
-                  hintText: 'Select your role',
-                  prefixIcon: const Icon(
-                    Icons.person_rounded,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      10.0,
+              if (appProvider.user.role == _roles['admin'])
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 10.0,
                     ),
-                  ),
+                    DropdownButtonFormField(
+                      key: _dropDownKey,
+                      decoration: const InputDecoration(
+                        labelText: 'Role',
+                        prefixIcon: Icon(
+                          Icons.person_rounded,
+                        ),
+                      ),
+                      value: _roles['client'],
+                      items: [
+                        DropdownMenuItem(
+                          value: _roles['admin'],
+                          child: const Text('Admin'),
+                        ),
+                        DropdownMenuItem(
+                          value: _roles['client'],
+                          child: const Text('Client'),
+                        ),
+                      ],
+                      onChanged: (value) {},
+                    ),
+                  ],
                 ),
-                items: _roles.entries.map((e) {
-                  return DropdownMenuItem(
-                    value: e.value,
-                    child: Text(e.key),
-                  );
-                }).toList(),
-                onChanged: (value) {},
-              ),
               const SizedBox(
-                height: 10.0,
+                height: 15.0,
               ),
               MaterialButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Processing Data'),
-                      ),
-                    );
+                    _isLoading = true;
+                    setState(() {});
                     if (_controllers['password']!.text !=
                         _controllers['confirmPassword']!.text) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -142,13 +150,29 @@ class _UserFormState extends State<UserForm> {
                               'Password and Confirm Password must be the same'),
                         ),
                       );
+                    }
+                    final user = UserModel(
+                      username: _controllers['username']!.text.trim(),
+                      password: _controllers['password']!.text.trim(),
+                      email: _controllers['email']!.text.trim(),
+                      firstName: _controllers['firstName']!.text.trim(),
+                      lastName: _controllers['lastName']!.text.trim(),
+                      role: _dropDownKey.currentState != null
+                          ? _dropDownKey.currentState!.value as int
+                          : _roles['client']!,
+                    );
+                    final response = await userProvider.saveUser(user: user,token: appProvider.token);
+                    if (response) {
+                      Navigator.of(context).pop();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Register Success'),
+                          content: Text('Something went wrong'),
                         ),
                       );
                     }
+                    _isLoading = false;
+                    setState(() {});
                   }
                 },
                 color: Colors.blue,
@@ -159,14 +183,38 @@ class _UserFormState extends State<UserForm> {
                     50.0,
                   ),
                 ),
-                child: const Text(
-                  'Register',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: _isLoading
+                    ? const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 20.0,
+                            width: 20.0,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            'Sending...',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
+                    : const Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
 import 'package:internet_banking/src/src.dart';
 
-class UserModel extends BaseModel{
+class UserModel extends BaseModel {
   String? firstName;
   String? lastName;
   String? email;
@@ -36,4 +36,8 @@ class UserModel extends BaseModel{
     };
   }
 
+  @override
+  String toString() {
+    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, username: $username, password: $password, role: $role)';
+  }
 }

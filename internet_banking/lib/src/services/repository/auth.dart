@@ -8,7 +8,8 @@ class AuthRepository {
   final _endpoint = 'api/auth/';
 
   Future<AuthResponse> login(AuthRequest request) async {
-    final response = await http.post(Uri.https(baseUrl!, '${_endpoint}login'), body: {
+    final response =
+        await http.post(Uri.https(baseUrl!, '${_endpoint}login'), body: {
       'username': request.username,
       'password': request.password,
     });
@@ -20,7 +21,7 @@ class AuthRepository {
   }
 
   Future<UserModel> register({required UserModel user}) async {
-    final response = await http.post(Uri.https(baseUrl!, '${_endpoint}register'),
+    final response = await http.post(Uri.https(baseUrl!, '${_endpoint}sign-up'),
         body: jsonEncode(user.toJson()),
         headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 201) {
@@ -32,7 +33,7 @@ class AuthRepository {
 
   Future<UserModel> update(
       {required UserModel user, required String token}) async {
-    final response = await http.put(Uri.https(baseUrl!, '/update'),
+    final response = await http.put(Uri.https(baseUrl!, '${_endpoint}update'),
         body: jsonEncode(user.toJson()),
         headers: {
           'authorization': 'Bearer $token',

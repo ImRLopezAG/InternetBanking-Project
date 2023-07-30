@@ -12,9 +12,18 @@ class AppTheme {
 
   static ThemeData darkTheme = ThemeData.dark(useMaterial3: true).copyWith(
     colorScheme: darkScheme,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+    ),
   );
 
   static ThemeData lightTheme = ThemeData.light(useMaterial3: true).copyWith(
     colorScheme: lightScheme,
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.transparent,
+      selectedItemColor: Colors.blue,
+      unselectedItemColor: Colors.grey,
+    ),
   );
 }

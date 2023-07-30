@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:internet_banking/src/src.dart';
 import 'package:provider/provider.dart';
@@ -17,10 +19,10 @@ class LoginForm extends StatelessWidget {
           color: Colors.black,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(
-              48.0,
+              49.0,
             ),
             topRight: Radius.circular(
-              48.0,
+              49.0,
             ),
           ),
         ),
@@ -46,6 +48,9 @@ class _FormFieldsState extends State<FormFields> {
     'username': TextEditingController(),
     'password': TextEditingController(),
   };
+
+  bool _loginSuccess = true;
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -63,13 +68,26 @@ class _FormFieldsState extends State<FormFields> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(
+        vertical: 80.0,
+        horizontal: 24.0,
+      ),
       child: Form(
         key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              _loginSuccess ? '' : 'Invalid credentials',
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 24.0,
+              ),
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
             TextForm(
               label: 'Username',
               hint: 'Enter your username',
@@ -90,22 +108,35 @@ class _FormFieldsState extends State<FormFields> {
               controller: _controllers['password']!,
             ),
             const SizedBox(
-              height: 10.0,
+              height: 15.0,
             ),
             MaterialButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  _isLoading = true;
+                  setState(() {});
                   final request = AuthRequest(
                     username: _controllers['username']!.text.trim(),
                     password: _controllers['password']!.text.trim(),
                   );
-
                   final isLogin = await _appProvider.login(request: request);
+
                   if (isLogin) {
                     Navigator.popAndPushNamed(context, '/home');
+                    _isLoading = false;
+                    setState(() {});
+                  } else {
+                    _loginSuccess = false;
+                    _isLoading = false;
+                    setState(() {});
+                    Timer(const Duration(milliseconds: 1500), () {
+                      _loginSuccess = true;
+                      setState(() {});
+                    });
                   }
                 }
               },
+              
               minWidth: double.infinity,
               height: 60.0,
               color: Colors.blue.shade900,
@@ -114,14 +145,38 @@ class _FormFieldsState extends State<FormFields> {
                   50.0,
                 ),
               ),
-              child: const Text(
-                'Login',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: _isLoading
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 20.0,
+                          width: 20.0,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Text(
+                          'Sending...',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    )
+                  : const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
             const SizedBox(
               height: 10.0,
