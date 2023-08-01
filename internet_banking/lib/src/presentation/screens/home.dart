@@ -24,21 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar:
           TopBar(drawerKey: _drawerKey, title: _titles[appProvider.homeIndex]),
       drawer: SideMenu(onTap: _setWidgets),
-      body: FutureBuilder<bool>(
-        future: appProvider.setUser(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return IndexedStack(
-              index: appProvider.homeIndex,
-              children: _widgets,
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: _widgets[appProvider.homeIndex],
       bottomNavigationBar: Container(
         height: 70.0,
         decoration: BoxDecoration(
@@ -68,11 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_rounded),
-                label: 'User',
+                icon: Icon(Icons.home_max_rounded),
+                label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.send_rounded),
+                icon: Icon(Icons.attach_money_rounded),
                 label: 'Transfer',
               ),
               BottomNavigationBarItem(

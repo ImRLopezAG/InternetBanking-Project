@@ -17,6 +17,12 @@ class AppProvider with ChangeNotifier {
   }
 
   UserModel get user => _user;
+  set user(UserModel user) {
+    _user = user;
+    user = user;
+    notifyListeners();
+  }
+
   String get token => _token;
 
   Future<bool> login({required AuthRequest request}) async {
@@ -29,7 +35,7 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future logout() async {
+  void logout() {
     _token = '';
     _user = UserModel();
     notifyListeners();
@@ -39,9 +45,10 @@ class AppProvider with ChangeNotifier {
     try {
       JWT jwt = JWT.decode(_token);
       final payload = Payload.fromJson(jwt.payload);
-      _user = await _userRepository.getById(id: payload.uid!, token: _token);
-      print(_user);
-      notifyListeners();
+      _user = await _userRepository.getById(
+        id: payload.uid!,
+        token: _token,
+      );
       return true;
     } catch (e) {
       return false;

@@ -15,14 +15,38 @@ class UserModel extends BaseModel {
     this.username,
     this.password,
     this.role,
-  });
+    String? id,
+    DateTime? createdAt,
+  }) : super(id: id, createdAt: createdAt);
 
-  UserModel.fromJson(Map<String, dynamic> json) {
-    firstName = json['firstName'];
-    lastName = json['lastName'];
-    email = json['email'];
-    username = json['username'];
-    role = json['role'];
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        id: json["_id"],
+        role: json["role"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        username: json["username"],
+        email: json["email"],
+      );
+
+  UserModel copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? username,
+    String? password,
+    int? role,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      username: username ?? this.username,
+      password: password ?? this.password,
+      role: role ?? this.role,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -34,10 +58,5 @@ class UserModel extends BaseModel {
       'password': password,
       'role': role,
     };
-  }
-
-  @override
-  String toString() {
-    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, username: $username, password: $password, role: $role)';
   }
 }

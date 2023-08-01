@@ -1,11 +1,6 @@
-class BaseModel{
-  int? id;
-  String? createdAt;
+abstract class BaseModel{
+  String? id;
+  DateTime? createdAt;
 
   BaseModel({this.id, this.createdAt});
-
-  BaseModel.fromJson(Map<String, dynamic> json){
-    id = json['_id'];
-    createdAt = json['createdAt'];
-  }
 }

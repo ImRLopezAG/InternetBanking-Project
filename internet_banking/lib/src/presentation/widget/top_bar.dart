@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:internet_banking/src/src.dart';
 
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState> drawerKey;
@@ -24,47 +25,41 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: Container(
         margin: const EdgeInsets.only(
-          top: 20.0,
+          top: 10.0,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 20.0,
-              ),
-              child: CircleAvatar(
-                radius: 30.0,
-                backgroundColor: Colors.white,
-                child: IconButton(
-                  onPressed: drawerKey.currentState!.openDrawer,
-                  icon: Icon(Icons.person, color: Colors.blue[900], size: 30.0),
-                ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leading: CircleAvatar(
+              radius: 30.0,
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: drawerKey.currentState!.openDrawer,
+                icon: Icon(Icons.person, color: Colors.blue[900], size: 30.0),
               ),
             ),
-            Text(
+            title: Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.center,
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                right: 20.0,
-              ),
-              child: IconButton(
-                onPressed: () {},
+            centerTitle: true,
+            actions: [
+              IconButton(
+                onPressed: () =>
+                    showSearch(context: context, delegate: SearchBeneficiary()),
                 icon: const Icon(
                   Icons.search_rounded,
                   color: Colors.white,
                   size: 30.0,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:internet_banking/src/src.dart';
 import 'package:provider/provider.dart';
 
-class SideMenu extends StatelessWidget {
+class SideMenu extends StatefulWidget {
   final Function(int) onTap;
   const SideMenu({super.key, required this.onTap});
+
+  @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context);
@@ -69,21 +75,59 @@ class SideMenu extends StatelessWidget {
               leading: const Icon(Icons.people_rounded),
               title: const Text('Beneficiary'),
               onTap: () {
-                onTap(3);
+                _showModal(
+                  context: context,
+                  child: const Text.rich(
+                    TextSpan(
+                      text: 'Beneficiary',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.edit_rounded),
               title: const Text('Edit Profile'),
               onTap: () {
-                onTap(3);
+                _showModal(
+                  context: context,
+                  child: const UserForm(isEdit: true),
+                );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.people_rounded),
-              title: const Text('Beneficiary'),
+              leading: const Icon(Icons.add_card_rounded),
+              title: const Text('Payment'),
               onTap: () {
-                onTap(3);
+                _showModal(
+                  context: context,
+                  child: const PaymentForm(),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_shopping_cart_rounded),
+              title: const Text('Transaction'),
+              onTap: () {
+                _showModal(
+                  context: context,
+                  child: const TransferForm(),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.app_shortcut_rounded),
+              title: const Text('About'),
+              onTap: () {
+                showAboutDialog(
+                    context: context,
+                    applicationIcon: const Icon(Icons.museum_rounded),
+                    applicationName: 'Internet Banking',
+                    applicationVersion: '1.0');
               },
             ),
             ListTile(
@@ -98,6 +142,30 @@ class SideMenu extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showModal({required BuildContext context, required Widget child}) {
+    showModalBottomSheet(
+      elevation: 5,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          // Wrap with SingleChildScrollView
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              right: 24.0,
+              top: 24.0,
+            ),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

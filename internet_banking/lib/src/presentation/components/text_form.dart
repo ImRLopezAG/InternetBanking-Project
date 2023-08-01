@@ -4,6 +4,7 @@ class TextForm extends StatelessWidget {
   final String label;
   final String hint;
   final Icon prefixIcon;
+  final TextInputType keyboardType;
   final TextEditingController controller;
 
   const TextForm({
@@ -12,6 +13,7 @@ class TextForm extends StatelessWidget {
     required this.hint,
     required this.prefixIcon,
     required this.controller,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -20,6 +22,7 @@ class TextForm extends StatelessWidget {
       obscureText:
           label == 'Password' || label == 'Confirm Password' ? true : false,
       controller: controller,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

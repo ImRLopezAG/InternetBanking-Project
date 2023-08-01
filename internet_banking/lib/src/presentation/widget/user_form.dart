@@ -3,7 +3,8 @@ import 'package:internet_banking/src/src.dart';
 import 'package:provider/provider.dart';
 
 class UserForm extends StatefulWidget {
-  const UserForm({super.key});
+  final bool isEdit;
+  const UserForm({super.key, this.isEdit = false});
 
   @override
   State<UserForm> createState() => _UserFormState();
@@ -27,12 +28,43 @@ class _UserFormState extends State<UserForm> {
     'client': 2,
   };
 
-  bool _isLoading = false;
+  AppProvider appProvider = AppProvider();
+  UserProvider userProvider = UserProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appProvider = Provider.of<AppProvider>(context, listen: false);
+      userProvider = Provider.of<UserProvider>(context, listen: false);
+      if (widget.isEdit) {
+        final provider = appProvider.user;
+        _controllers['username']!.text = provider.username!;
+        _controllers['email']!.text = provider.email!;
+        _controllers['firstName']!.text = provider.firstName!;
+        _controllers['lastName']!.text = provider.lastName!;
+      }
+    });
+    if (widget.isEdit) {
+      final userProvider = Provider.of<AppProvider>(context, listen: false);
+      final provider = userProvider.user;
+      _controllers['username']!.text = provider.username!;
+      _controllers['email']!.text = provider.email!;
+      _controllers['firstName']!.text = provider.firstName!;
+      _controllers['lastName']!.text = provider.lastName!;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controllers.forEach((key, value) {
+      value.dispose();
+    });
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context, listen: false);
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -61,17 +93,32 @@ class _UserFormState extends State<UserForm> {
                 ),
                 controller: _controllers['lastName']!,
               ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              TextForm(
-                label: 'Username',
-                hint: 'Enter your username',
-                prefixIcon: const Icon(
-                  Icons.person_rounded,
+              if (!widget.isEdit)
+                const SizedBox(
+                  height: 10.0,
                 ),
-                controller: _controllers['username']!,
-              ),
+              if (!widget.isEdit)
+                TextForm(
+                  label: 'Username',
+                  hint: 'Enter your username',
+                  prefixIcon: const Icon(
+                    Icons.person_rounded,
+                  ),
+                  controller: _controllers['username']!,
+                ),
+              if (!widget.isEdit)
+                const SizedBox(
+                  height: 10.0,
+                ),
+              if (!widget.isEdit)
+                TextForm(
+                  label: 'Email',
+                  hint: 'Enter your email',
+                  prefixIcon: const Icon(
+                    Icons.email_rounded,
+                  ),
+                  controller: _controllers['email']!,
+                ),
               const SizedBox(
                 height: 10.0,
               ),
@@ -96,14 +143,6 @@ class _UserFormState extends State<UserForm> {
               ),
               const SizedBox(
                 height: 10.0,
-              ),
-              TextForm(
-                label: 'Email',
-                hint: 'Enter your email',
-                prefixIcon: const Icon(
-                  Icons.email_rounded,
-                ),
-                controller: _controllers['email']!,
               ),
               if (appProvider.user.role == _roles['admin'])
                 Column(
@@ -137,89 +176,53 @@ class _UserFormState extends State<UserForm> {
               const SizedBox(
                 height: 15.0,
               ),
-              MaterialButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _isLoading = true;
-                    setState(() {});
-                    if (_controllers['password']!.text !=
-                        _controllers['confirmPassword']!.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'Password and Confirm Password must be the same'),
-                        ),
-                      );
-                    }
-                    final user = UserModel(
-                      username: _controllers['username']!.text.trim(),
-                      password: _controllers['password']!.text.trim(),
-                      email: _controllers['email']!.text.trim(),
-                      firstName: _controllers['firstName']!.text.trim(),
-                      lastName: _controllers['lastName']!.text.trim(),
-                      role: _dropDownKey.currentState != null
-                          ? _dropDownKey.currentState!.value as int
-                          : _roles['client']!,
-                    );
-                    final response = await userProvider.saveUser(user: user,token: appProvider.token);
-                    if (response) {
-                      Navigator.of(context).pop();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Something went wrong'),
-                        ),
-                      );
-                    }
-                    _isLoading = false;
-                    setState(() {});
-                  }
-                },
-                color: Colors.blue,
-                minWidth: double.infinity,
-                height: 60.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    50.0,
-                  ),
-                ),
-                child: _isLoading
-                    ? const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 20.0,
-                            width: 20.0,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Text(
-                            'Sending...',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Text(
-                        'Register',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
+              SubmitButton(onPressed: saveUser)
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future saveUser() async {
+    if (_formKey.currentState!.validate()) {
+      if (_controllers['password']!.text !=
+          _controllers['confirmPassword']!.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password and Confirm Password must be the same'),
+          ),
+        );
+      }
+      final user = UserModel(
+        username: _controllers['username']!.text.trim(),
+        password: _controllers['password']!.text.trim(),
+        email: _controllers['email']!.text.trim(),
+        firstName: _controllers['firstName']!.text.trim(),
+        lastName: _controllers['lastName']!.text.trim(),
+        role: _dropDownKey.currentState != null
+            ? _dropDownKey.currentState!.value as int
+            : _roles['client']!,
+      );
+      if (widget.isEdit) {
+        user.id = appProvider.user.id;
+      }
+      final response =
+          await userProvider.saveUser(user: user, token: appProvider.token);
+      if (response) {
+        setState(() {
+          if (widget.isEdit) {
+            appProvider.user = user;
+          }
+        });
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Something went wrong'),
+          ),
+        );
+      }
+    }
   }
 }

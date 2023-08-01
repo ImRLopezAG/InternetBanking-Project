@@ -7,6 +7,10 @@ class AuthRepository {
   String? baseUrl = Env.baseUrl!;
   final _endpoint = 'api/auth/';
 
+  static final AuthRepository _instance = AuthRepository._internal();
+  AuthRepository._internal();
+  factory AuthRepository() => _instance;
+
   Future<AuthResponse> login(AuthRequest request) async {
     final response =
         await http.post(Uri.https(baseUrl!, '${_endpoint}login'), body: {
@@ -20,29 +24,31 @@ class AuthRepository {
     }
   }
 
-  Future<UserModel> register({required UserModel user}) async {
-    final response = await http.post(Uri.https(baseUrl!, '${_endpoint}sign-up'),
-        body: jsonEncode(user.toJson()),
-        headers: {'Content-Type': 'application/json'});
-    if (response.statusCode == 201) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to register');
+  Future<bool> register({required UserModel user}) async {
+    try {
+      final response = await http.post(
+          Uri.https(baseUrl!, '${_endpoint}register'),
+          body: jsonEncode(user.toJson()),
+          headers: {'Content-Type': 'application/json'});
+      return response.statusCode == 201;
+    } catch (e) {
+      throw Exception('$e');
     }
   }
 
-  Future<UserModel> update(
-      {required UserModel user, required String token}) async {
-    final response = await http.put(Uri.https(baseUrl!, '${_endpoint}update'),
-        body: jsonEncode(user.toJson()),
-        headers: {
-          'authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        });
-    if (response.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to update');
+  Future<bool> update({required UserModel user, required String token}) async {
+    try {
+      final id = user.id;
+      final response = await http.put(
+          Uri.https(baseUrl!, '${_endpoint}update/$id'),
+          body: jsonEncode(user.toJson()),
+          headers: {
+            'authorization': 'Bearer $token',
+            'Content-Type': 'application/json'
+          });
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('$e');
     }
   }
 }

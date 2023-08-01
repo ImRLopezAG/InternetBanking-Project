@@ -7,6 +7,10 @@ class UserRepository {
   String? baseUrl = Env.baseUrl!;
   final _endpoint = 'api/user/';
 
+  static final UserRepository _instance = UserRepository._internal();
+  UserRepository._internal();
+  factory UserRepository() => _instance;
+
   Future<List<UserModel>> getAll({required String token}) async {
     final response = await http.get(Uri.https(baseUrl!, '${_endpoint}list'),
         headers: {
@@ -35,8 +39,7 @@ class UserRepository {
     }
   }
 
-  Future<UserModel> getByEmail(
-      {required String email, required String token}) async {
+  Future<UserModel> getByEmail({required String email, required String token}) async {
     final response = await http
         .get(Uri.parse('https://$baseUrl/${_endpoint}get/$email'), headers: {
       'authorization': 'Bearer $token',
@@ -50,8 +53,7 @@ class UserRepository {
     }
   }
 
-  Future<UserModel> getByUsername(
-      {required String username, required String token}) async {
+  Future<UserModel> getByUsername({required String username, required String token}) async {
     final response = await http
         .get(Uri.parse('$baseUrl/${_endpoint}get/$username'), headers: {
       'authorization': 'Bearer $token',
