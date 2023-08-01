@@ -18,33 +18,57 @@ export const userValidation = async (req: Request, res: Response, next: NextFunc
   const regexInvalidUserName = /[a-zA-Z0-9]/g
   const regexInvalidEmail = /\S+@\S+\.\S+/
 
-  if (!regexInvalidUserName.test(username)) {
+  if (!regexInvalidUserName.test(username) && req.method === 'POST') {
     return res.status(400).json({ error: 'Username is invalid' })
   }
 
-  if (!regexInvalidEmail.test(email)) {
+  if (!regexInvalidEmail.test(email) && req.method === 'POST') {
     return res.status(400).json({ error: 'Email is invalid' })
   }
 
-  if (username === undefined || email === undefined) {
+  if ((username === undefined || email === undefined) && req.method === 'POST') {
     return res.status(400).json({
       status: 400,
       message: 'The property username or email is required'
     })
   }
+  const { authorization } = req.headers
+  if (authorization === undefined && req.method === 'POST') {
+    const userByUsername = await services.findOne({ username }).exec()
+    if (userByUsername?.username === username) {
+      return res
+        .status(400)
+        .json({ status: 400, message: 'Username already in use' })
+    }
 
-  const userByUsername = await services.findOne({ username }).exec()
-  if (userByUsername?.username === username) {
-    return res
-      .status(400)
-      .json({ status: 400, message: 'Username already in use' })
+    const userByEmail = await services.findOne({ email }).exec()
+    if (userByEmail?.email === email) {
+      return res
+        .status(400)
+        .json({ status: 400, message: 'Email already in use' })
+    }
   }
+  if (authorization !== undefined && req.method === 'PUT') {
+    const payload = jwtValid({ authorization })
+    if (payload.message) return res.status(401).json({ error: payload.message })
+    const userByUsername = await services.findOne({ username }).exec()
 
-  const userByEmail = await services.findOne({ email }).exec()
-  if (userByEmail?.email === email) {
-    return res
-      .status(400)
-      .json({ status: 400, message: 'Email already in use' })
+    if (userByUsername !== null && userByUsername.username !== payload.sub) {
+      if (userByUsername?.username === username) {
+        return res
+          .status(400)
+          .json({ status: 400, message: 'Username already in use' })
+      }
+    }
+
+    const userByEmail = await services.findOne({ email }).exec()
+    if (userByEmail !== null && userByEmail.email !== payload.email) {
+      if (userByEmail?.email === email) {
+        return res
+          .status(400)
+          .json({ status: 400, message: 'Email already in use' })
+      }
+    }
   }
 
   return next()
