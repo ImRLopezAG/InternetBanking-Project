@@ -484,7 +484,7 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/user/get/{email}': {
+    '/api/user/email/{email}': {
       get: {
         tags: ['User'],
         summary: 'Get user by email',
@@ -528,7 +528,7 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/user/get/{username}': {
+    '/api/user/user/{username}': {
       get: {
         tags: ['User'],
         summary: 'Get user by username',
@@ -686,7 +686,7 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
-    '/api/product/get/{pin}': {
+    '/api/product/pin/{pin}': {
       get: {
         tags: ['Product'],
         summary: 'Get a product',

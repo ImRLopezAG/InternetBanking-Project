@@ -10,6 +10,6 @@ const controller: UserController = container.resolve(UserController)
 
 user.get('/list', adminValidation, controller.GetAll)
 user.get('/get/:id', ownerValidation, controller.Get)
-user.get('/get/:email', controller.GetByEmail)
-user.get('/get/:username', controller.GetByUsername)
+user.get('/email/:email', controller.GetByEmail)
+user.get('/username/:username', controller.GetByUsername)
 user.delete('/delete/:id', adminValidation, controller.Delete)
