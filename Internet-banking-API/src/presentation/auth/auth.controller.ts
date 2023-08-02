@@ -53,7 +53,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     return res
       .status(200)
       .header('Authorization', token)
-      .json({ message: 'Login successful', token })
+      .json({ message: 'Login successful', token, success: true })
   } catch (err) {
     if (err instanceof Error) {
       next(err)
