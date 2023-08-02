@@ -12,7 +12,6 @@ class UserForm extends StatefulWidget {
 
 class _UserFormState extends State<UserForm> {
   final _formKey = GlobalKey<FormState>();
-  final _dropDownKey = GlobalKey<FormFieldState>();
 
   final Map<String, TextEditingController> _controllers = {
     'username': TextEditingController(),
@@ -21,11 +20,6 @@ class _UserFormState extends State<UserForm> {
     'email': TextEditingController(),
     'firstName': TextEditingController(),
     'lastName': TextEditingController(),
-  };
-
-  final Map<String, int> _roles = {
-    'admin': 1,
-    'client': 2,
   };
 
   AppProvider appProvider = AppProvider();
@@ -45,14 +39,6 @@ class _UserFormState extends State<UserForm> {
         _controllers['lastName']!.text = provider.lastName!;
       }
     });
-    if (widget.isEdit) {
-      final userProvider = Provider.of<AppProvider>(context, listen: false);
-      final provider = userProvider.user;
-      _controllers['username']!.text = provider.username!;
-      _controllers['email']!.text = provider.email!;
-      _controllers['firstName']!.text = provider.firstName!;
-      _controllers['lastName']!.text = provider.lastName!;
-    }
   }
 
   @override
@@ -144,39 +130,9 @@ class _UserFormState extends State<UserForm> {
               const SizedBox(
                 height: 10.0,
               ),
-              if (appProvider.user.role == _roles['admin'])
-                Column(
-                  children: [
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    DropdownButtonFormField(
-                      key: _dropDownKey,
-                      decoration: const InputDecoration(
-                        labelText: 'Role',
-                        prefixIcon: Icon(
-                          Icons.person_rounded,
-                        ),
-                      ),
-                      value: _roles['client'],
-                      items: [
-                        DropdownMenuItem(
-                          value: _roles['admin'],
-                          child: const Text('Admin'),
-                        ),
-                        DropdownMenuItem(
-                          value: _roles['client'],
-                          child: const Text('Client'),
-                        ),
-                      ],
-                      onChanged: (value) {},
-                    ),
-                  ],
-                ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              SubmitButton(onPressed: saveUser)
+              SubmitButton(
+                  onPressed: saveUser,
+                  label: widget.isEdit ? 'Update' : 'Register')
             ],
           ),
         ),
@@ -200,9 +156,7 @@ class _UserFormState extends State<UserForm> {
         email: _controllers['email']!.text.trim(),
         firstName: _controllers['firstName']!.text.trim(),
         lastName: _controllers['lastName']!.text.trim(),
-        role: _dropDownKey.currentState != null
-            ? _dropDownKey.currentState!.value as int
-            : _roles['client']!,
+        role: 2,
       );
       if (widget.isEdit) {
         user.id = appProvider.user.id;

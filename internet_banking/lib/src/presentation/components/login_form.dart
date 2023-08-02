@@ -11,23 +11,26 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 5,
-      child: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(
-              49.0,
-            ),
-            topRight: Radius.circular(
-              49.0,
-            ),
+    final size = MediaQuery.of(context).size;
+    return AnimatedContainer(
+      duration: const Duration(
+        milliseconds: 500,
+      ),
+      width: double.infinity,
+      height: size.height * 0.7,
+      alignment: Alignment.topCenter,
+      decoration: const BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+            49.0,
+          ),
+          topRight: Radius.circular(
+            49.0,
           ),
         ),
-        child: const FormFields(),
       ),
+      child: const FormFields(),
     );
   }
 }
@@ -50,7 +53,6 @@ class _FormFieldsState extends State<FormFields> {
   };
 
   bool _loginSuccess = true;
-  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -65,18 +67,40 @@ class _FormFieldsState extends State<FormFields> {
     super.dispose();
   }
 
+  Future _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {});
+      final request = AuthRequest(
+        username: _controllers['username']!.text.trim(),
+        password: _controllers['password']!.text.trim(),
+      );
+      final response = await _appProvider.login(request: request);
+
+      if (response.success!) {
+        Navigator.popAndPushNamed(context, '/home');
+        setState(() {});
+      } else {
+        _loginSuccess = false;
+        setState(() {});
+        Timer(const Duration(milliseconds: 1500), () {
+          _loginSuccess = true;
+          setState(() {});
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: 80.0,
         horizontal: 24.0,
       ),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               _loginSuccess ? '' : 'Invalid credentials',
@@ -110,73 +134,9 @@ class _FormFieldsState extends State<FormFields> {
             const SizedBox(
               height: 15.0,
             ),
-            MaterialButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _isLoading = true;
-                  setState(() {});
-                  final request = AuthRequest(
-                    username: _controllers['username']!.text.trim(),
-                    password: _controllers['password']!.text.trim(),
-                  );
-                  final isLogin = await _appProvider.login(request: request);
-
-                  if (isLogin) {
-                    Navigator.popAndPushNamed(context, '/home');
-                    _isLoading = false;
-                    setState(() {});
-                  } else {
-                    _loginSuccess = false;
-                    _isLoading = false;
-                    setState(() {});
-                    Timer(const Duration(milliseconds: 1500), () {
-                      _loginSuccess = true;
-                      setState(() {});
-                    });
-                  }
-                }
-              },
-              
-              minWidth: double.infinity,
-              height: 60.0,
-              color: Colors.blue.shade900,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  50.0,
-                ),
-              ),
-              child: _isLoading
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 20.0,
-                          width: 20.0,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          'Sending...',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    )
-                  : const Text(
-                      'Login',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+            SubmitButton(
+              onPressed: _login,
+              label: 'Login',
             ),
             const SizedBox(
               height: 10.0,

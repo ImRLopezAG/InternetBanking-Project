@@ -56,12 +56,14 @@ class AuthRepository {
 class AuthResponse {
   final String? token;
   final String? message;
+  final bool? success;
 
-  AuthResponse({this.token, this.message});
+  AuthResponse({this.token, this.message, this.success});
 
   AuthResponse.fromJson(Map<String, dynamic> json)
       : token = json['token'],
-        message = json['message'];
+        message = json['message'],
+        success = json['token'] != null;
 }
 
 class AuthRequest {

@@ -25,13 +25,16 @@ class AppProvider with ChangeNotifier {
 
   String get token => _token;
 
-  Future<bool> login({required AuthRequest request}) async {
+  Future<AuthResponse> login({required AuthRequest request}) async {
     try {
       final response = await _authRepository.login(request);
       _token = response.token!;
-      return true;
+      return response;
     } catch (e) {
-      return false;
+      return AuthResponse(
+        success: false,
+        message: '$e',
+      );
     }
   }
 
@@ -60,13 +63,15 @@ class Payload {
   String? uid;
   String? email;
   String? username;
-  Payload({this.uid, this.email, this.username});
+  int? role;
+  Payload({this.uid, this.email, this.username, this.role});
 
   factory Payload.fromJson(Map<String, dynamic> json) {
     return Payload(
       uid: json['uid'],
       email: json['email'],
       username: json['username'],
+      role: json['role'],
     );
   }
 }
