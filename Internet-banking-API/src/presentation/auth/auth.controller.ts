@@ -43,7 +43,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
       },
       SECRET,
       {
-        expiresIn: '1h',
+        expiresIn: '1d',
         issuer: 'my app',
         audience: 'my users',
         jwtid: crypto.randomBytes(16).toString('hex')
