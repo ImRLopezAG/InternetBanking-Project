@@ -16,6 +16,7 @@ export class ProductController extends GenericController<Product, ProductService
     this.AddBalance = this.AddBalance.bind(this)
     this.GetByPin = this.GetByPin.bind(this)
     this.GetByOwner = this.GetByOwner.bind(this)
+    this.GetPrincipal = this.GetPrincipal.bind(this)
   }
 
   async AddBalance (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
@@ -50,6 +51,21 @@ export class ProductController extends GenericController<Product, ProductService
       const { owner } = req.params
       const products = await this.service.GetByOwner(owner)
       return res.status(200).json(products)
+    } catch (error) {
+      console.log(error)
+      if (error instanceof Error) {
+        return next(error)
+      }
+      return res.status(500).send('Internal server error')
+    }
+  }
+
+  async GetPrincipal (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { owner } = req.params
+      const products = await this.service.GetByOwner(owner)
+      const principal = products.find((product) => product.principal)
+      return res.status(200).json(principal)
     } catch (error) {
       console.log(error)
       if (error instanceof Error) {
