@@ -31,7 +31,7 @@ export class Product extends BaseEntity {
   @prop({ default: true })
   declare active: boolean
 
-  @prop({ enum: AccountType, default: AccountType.SAVING })
+  @prop({ enum: AccountType, default: AccountType.DEBIT })
   declare type: AccountType
 
   @prop({ required: true, ref: () => User })

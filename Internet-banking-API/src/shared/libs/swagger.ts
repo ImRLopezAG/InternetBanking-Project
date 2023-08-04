@@ -145,9 +145,9 @@ const swaggerDefinition: OAS3Definition = {
           },
           type: {
             type: 'number',
-            enum: ['debit', 'credit', 'saving', 'loan'],
-            default: 'savings',
-            description: '1 for debit, 2 for credit, 3 for savings, 4 for loan'
+            enum: ['credit', 'debit', 'loan'],
+            default: 2,
+            description: '1 for credit, 2 for debit, 3 for loan'
           },
           balance: {
             type: 'number'
@@ -159,7 +159,7 @@ const swaggerDefinition: OAS3Definition = {
         },
         example: {
           user: 'your user id',
-          type: 3,
+          type: 2,
           balance: 500
         }
       },
@@ -194,7 +194,7 @@ const swaggerDefinition: OAS3Definition = {
             type: 'boolean'
           },
           type: {
-            type: 'string',
+            type: 'number',
             enum: ['savings', 'credit', 'loan']
           }
         }
@@ -239,6 +239,12 @@ const swaggerDefinition: OAS3Definition = {
           receptor: {
             type: 'string'
           },
+          type: {
+            type: 'number',
+            enum: ['payment', 'transfer'],
+            default: 2,
+            description: '1 for payment, 2 for transfer'
+          },
           amount: {
             type: 'number'
           }
@@ -255,6 +261,9 @@ const swaggerDefinition: OAS3Definition = {
           },
           receptor: {
             type: 'string'
+          },
+          type: {
+            type: 'number'
           },
           amount: {
             type: 'number'

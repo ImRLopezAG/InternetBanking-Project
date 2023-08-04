@@ -4,8 +4,12 @@ export enum UserRole {
 }
 
 export enum AccountType {
-  DEBIT = 1,
-  CREDIT,
-  SAVING,
+  CREDIT = 1,
+  DEBIT,
   LOAN
+}
+
+export enum TransactionType {
+  PAYMENT = 1,
+  TRANSFER,
 }
