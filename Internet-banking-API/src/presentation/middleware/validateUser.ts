@@ -156,19 +156,13 @@ export const senderValidation = async (req: Request, res: Response, next: NextFu
   try {
     if (authorization === undefined) return res.status(401).json({ error: 'Access denied, you need to login' })
 
-    if (users.some(user => user.id === sender || user.id === senderBody)) {
+    if (users.some(user => user._id === sender || user._id === senderBody)) {
       return res.status(400).json({ error: 'Sender is invalid' })
     }
 
     const payload = jwtValid({ authorization })
     if (payload.message) {
       return res.status(401).json({ error: payload.message })
-    }
-    if (payload.uid !== sender || payload.uid !== senderBody) {
-      return res.status(401).json({
-        status: 401,
-        message: 'Access denied, you login with your own account'
-      })
     }
   } catch (error) {
     if (error instanceof Error) {

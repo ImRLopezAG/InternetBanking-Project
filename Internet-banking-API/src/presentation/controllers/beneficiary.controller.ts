@@ -12,6 +12,7 @@ export class BeneficiaryController extends GenericController<Beneficiary, Benefi
   constructor (service: BeneficiaryService) {
     super(service)
     this.service = service
+    this.GetBySender = this.GetBySender.bind(this)
   }
 
   async GetBySender (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
