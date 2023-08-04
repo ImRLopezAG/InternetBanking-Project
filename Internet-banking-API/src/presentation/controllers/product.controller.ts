@@ -59,6 +59,21 @@ export class ProductController extends GenericController<Product, ProductService
     }
   }
 
+  async GetPrincipal (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { owner } = req.params
+      const products = await this.service.GetByOwner(owner)
+      const principal = products.find((product) => product.principal)
+      return res.status(200).json(principal)
+    } catch (error) {
+      console.log(error)
+      if (error instanceof Error) {
+        return next(error)
+      }
+      return res.status(500).send('Internal server error')
+    }
+  }
+
   override async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
       const entity: Product = req.body
