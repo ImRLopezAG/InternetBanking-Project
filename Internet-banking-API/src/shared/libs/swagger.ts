@@ -1097,7 +1097,7 @@ const swaggerDefinition: OAS3Definition = {
                 schema: {
                   type: 'array',
                   items: {
-                    $ref: '#/components/schemas/Beneficiary'
+                    $ref: '#/components/schemas/User'
                   }
                 }
               }
