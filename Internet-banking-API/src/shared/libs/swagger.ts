@@ -440,6 +440,50 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
+    '/api/user/search/{query}': {
+      get: {
+        tags: ['User'],
+        summary: 'Search users',
+        description: 'Search users',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'query',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Search query, username or email'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Search users',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/User'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          }
+        }
+      }
+    },
     '/api/user/get/{id}': {
       get: {
         tags: ['User'],

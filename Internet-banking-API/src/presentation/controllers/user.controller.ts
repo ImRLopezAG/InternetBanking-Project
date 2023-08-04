@@ -14,6 +14,7 @@ export class UserController extends GenericController<User, UserService> impleme
     this.service = service
     this.GetByEmail = this.GetByEmail.bind(this)
     this.GetByUsername = this.GetByUsername.bind(this)
+    this.SearchUser = this.SearchUser.bind(this)
   }
 
   async GetByEmail (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
@@ -63,6 +64,21 @@ export class UserController extends GenericController<User, UserService> impleme
       return res
         .status(500)
         .json({ status: 500, message: 'Internal server error' })
+    }
+  }
+
+  async SearchUser (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { query } = req.params
+      query ?? res.status(400).json({ message: 'The search is required' })
+
+      const users = await this.service.SearchUser(query)
+      return res.status(200).json(users)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
+      return res.status(418).send('Internal server error')
     }
   }
 

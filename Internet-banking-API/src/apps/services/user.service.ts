@@ -31,6 +31,23 @@ export class UserService extends GenericService<User> implements IUserService {
     }
   }
 
+  async SearchUser (query: string): Promise<User[]> {
+    try {
+      const users = await UserModel.find({
+        $or: [
+          { username: { $regex: query, $options: 'i' } },
+          { email: { $regex: query, $options: 'i' } }
+        ]
+      }).exec()
+      return users
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error
+      }
+      throw new Error('Error while searching user')
+    }
+  }
+
   override async Create (user: User): Promise<User> {
     const entity = await super.Create(user)
     try {
