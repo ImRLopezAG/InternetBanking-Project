@@ -27,7 +27,7 @@ class AuthRepository {
   Future<bool> register({required UserModel user}) async {
     try {
       final response = await http.post(
-          Uri.https(baseUrl!, '${_endpoint}register'),
+          Uri.https(baseUrl!, '${_endpoint}sign-up'),
           body: jsonEncode(user.toJson()),
           headers: {'Content-Type': 'application/json'});
       return response.statusCode == 201;
@@ -63,7 +63,7 @@ class AuthResponse {
   AuthResponse.fromJson(Map<String, dynamic> json)
       : token = json['token'],
         message = json['message'],
-        success = json['token'] != null;
+        success = json['success'];
 }
 
 class AuthRequest {

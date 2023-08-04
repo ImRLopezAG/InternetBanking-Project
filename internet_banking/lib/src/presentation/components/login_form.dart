@@ -5,9 +5,7 @@ import 'package:internet_banking/src/src.dart';
 import 'package:provider/provider.dart';
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({
-    super.key,
-  });
+  const LoginForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +51,8 @@ class _FormFieldsState extends State<FormFields> {
   };
 
   bool _loginSuccess = true;
+  String _responseMessage = '';
+
   @override
   void initState() {
     super.initState();
@@ -75,12 +75,12 @@ class _FormFieldsState extends State<FormFields> {
         password: _controllers['password']!.text.trim(),
       );
       final response = await _appProvider.login(request: request);
-
       if (response.success!) {
         Navigator.popAndPushNamed(context, '/home');
         setState(() {});
       } else {
         _loginSuccess = false;
+        _responseMessage = response.message!;
         setState(() {});
         Timer(const Duration(milliseconds: 1500), () {
           _loginSuccess = true;
@@ -102,11 +102,16 @@ class _FormFieldsState extends State<FormFields> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _loginSuccess ? '' : 'Invalid credentials',
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 24.0,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  _loginSuccess ? '' : '● $_responseMessage',
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 24.0,
+                  ),
+                ),
               ),
             ),
             const SizedBox(

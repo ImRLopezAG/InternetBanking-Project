@@ -20,9 +20,10 @@ class MainApp extends StatelessWidget {
       initialRoute: '/login',
       theme: AppTheme.darkTheme,
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/sig-in': (context) => const SigInScreen(),
+        '/login': (_) => const LoginScreen(),
+        '/home': (_) => const HomeScreen(),
+        '/sig-in': (_) => const SigInScreen(),
+        '/product-details': (_) => const ProductDetailsScreen(),
       },
     );
   }
@@ -45,15 +46,15 @@ class AppState extends StatelessWidget {
         ),
         ChangeNotifierProvider<PaymentProvider>(
           create: (_) => PaymentProvider(),
-          lazy: false,
+          lazy: true,
         ),
         ChangeNotifierProvider<ProductProvider>(
           create: (_) => ProductProvider(),
-          lazy: false,
+          lazy: true,
         ),
         ChangeNotifierProvider<BeneficiaryProvider>(
           create: (_) => BeneficiaryProvider(),
-          lazy: false,
+          lazy: true,
         ),
       ],
       child: const MainApp(),

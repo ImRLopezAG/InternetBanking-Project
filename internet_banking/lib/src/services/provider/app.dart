@@ -29,11 +29,18 @@ class AppProvider with ChangeNotifier {
     try {
       final response = await _authRepository.login(request);
       _token = response.token!;
+      final payload = Payload.fromJson(JWT.decode(_token).payload);
+      if (payload.role == 1) {
+        return AuthResponse(
+          success: false,
+          message: 'You are not allowed to login',
+        );
+      }
       return response;
     } catch (e) {
       return AuthResponse(
         success: false,
-        message: '$e',
+        message: 'Invalid username or password',
       );
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:internet_banking/src/src.dart';
 import 'package:provider/provider.dart';
@@ -134,9 +136,11 @@ class _SideMenuState extends State<SideMenu> {
               leading: const Icon(Icons.logout_rounded),
               title: const Text('Logout'),
               onTap: () {
-                appProvider.logout();
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/login', (route) => false);
+                Timer(const Duration(milliseconds: 500), () {
+                  appProvider.logout();
+                });
               },
             ),
           ],

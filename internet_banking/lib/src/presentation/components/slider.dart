@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:internet_banking/src/src.dart';
+import 'package:provider/provider.dart';
 
 class Sliders extends StatefulWidget {
   final String title;
@@ -19,42 +21,64 @@ class _SlidersState extends State<Sliders> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      width: double.infinity,
-      height: 180,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              widget.title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (_, int index) {
-                return const _SliderCard();
-              },
-            ),
-          ),
-        ],
+    final provider = Provider.of<BeneficiaryProvider>(context);
+    return FutureBuilder<List<UserModel>>(
+      future: provider.getAll(
+        token: Provider.of<AppProvider>(context).token,
+        id: Provider.of<AppProvider>(context).user.id!,
       ),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            width: double.infinity,
+            height: 180,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    snapshot.data!.isEmpty ? '' : widget.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: provider.beneficiaries.length,
+                    itemBuilder: (_, int index) {
+                      final beneficiary = provider.beneficiaries[index];
+                      return _SliderCard(
+                        beneficiary: beneficiary,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 }
 
 class _SliderCard extends StatelessWidget {
-  const _SliderCard({Key? key}) : super(key: key);
+  final UserModel beneficiary;
+  const _SliderCard({Key? key, required this.beneficiary}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final productProviders =
+        Provider.of<ProductProvider>(context, listen: false);
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    final product = productProviders.getPrincipalForOwner(
+        owner: beneficiary.id!, token: appProvider.token);
     return Container(
       width: 100,
       height: 100,
@@ -65,6 +89,14 @@ class _SliderCard extends StatelessWidget {
       child: Column(
         children: [
           GestureDetector(
+            onTap: () async => _showModal(
+              context: context,
+              child: TransferForm(
+                isBeneficiary: true,
+                product: await product,
+              ),
+            ),
+            onLongPress: () => _deleteDialog(context),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: SizedBox(
@@ -82,14 +114,61 @@ class _SliderCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5),
-          const Text(
-            'Person',
+          Text(
+            beneficiary.username!,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
         ],
       ),
+    );
+  }
+
+  void _showModal({required BuildContext context, required Widget child}) {
+    showModalBottomSheet(
+      elevation: 5,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          // Wrap with SingleChildScrollView
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              right: 24.0,
+              top: 24.0,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  void _deleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Beneficiary'),
+          content:
+              const Text('Are you sure you want to delete this beneficiary?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

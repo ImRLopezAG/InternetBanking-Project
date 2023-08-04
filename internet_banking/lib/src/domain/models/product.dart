@@ -1,8 +1,8 @@
 import 'package:internet_banking/src/src.dart';
 
-class ProductModel extends BaseModel{
-  int? pin;
-  int? cvv;
+class ProductModel extends BaseModel {
+  String? pin;
+  String? cvv;
   String? expirationDate;
   String? cardNumber;
   String? cardHolder;
@@ -56,5 +56,4 @@ class ProductModel extends BaseModel{
       'accountType': type,
     };
   }
-
 }

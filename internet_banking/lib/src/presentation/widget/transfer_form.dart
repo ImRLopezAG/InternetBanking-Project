@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:internet_banking/src/src.dart';
+import 'package:provider/provider.dart';
 
 class TransferForm extends StatefulWidget {
-  const TransferForm({Key? key}) : super(key: key);
+  final bool isBeneficiary;
+  final ProductModel? product;
+  const TransferForm({
+    Key? key,
+    this.isBeneficiary = false,
+    this.product,
+  }) : super(key: key);
 
   @override
   State<TransferForm> createState() => _TransferFormState();
@@ -13,9 +20,27 @@ class _TransferFormState extends State<TransferForm> {
   final Map<String, TextEditingController> _controllers = {
     'accountNumber': TextEditingController(),
     'amount': TextEditingController(),
+    'sender': TextEditingController(),
   };
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isBeneficiary) {
+      _controllers['accountNumber']!.text = widget.product!.pin!;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controllers.forEach((key, value) => value.dispose());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    final products = productProvider.products;
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 20.0,
@@ -33,6 +58,33 @@ class _TransferFormState extends State<TransferForm> {
                 fontSize: 40.0,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: const Icon(
+                  Icons.credit_card,
+                ),
+              ),
+              hint: const Text('Select product'),
+              items: products
+                  .map(
+                    (product) => DropdownMenuItem(
+                      value: product.pin,
+                      child: Text(
+                        '${product.pin}',
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                _controllers['sender']!.text = value!;
+              },
             ),
             const SizedBox(
               height: 10.0,
@@ -62,7 +114,19 @@ class _TransferFormState extends State<TransferForm> {
               height: 10.0,
             ),
             SubmitButton(
-              onPressed: () async {},
+              label: 'Transfer',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final transaction = PaymentModel(
+                    sender: _controllers['sender']!.text,
+                    receptor: _controllers['accountNumber']!.text,
+                    type: 2,
+                    amount: int.parse(_controllers['amount']!.text),
+                  );
+                  print(transaction.toJson());
+                  Navigator.pop(context);
+                }
+              },
             ),
           ],
         ),
