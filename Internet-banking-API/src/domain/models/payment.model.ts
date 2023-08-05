@@ -14,6 +14,26 @@ export class Payment extends BaseEntity {
 
   @prop({ enum: TransactionType, default: TransactionType.TRANSFER })
   declare type: TransactionType
+
+  withSender (sender: string): this {
+    this.sender = sender
+    return this
+  }
+
+  withReceptor (receptor: string): this {
+    this.receptor = receptor
+    return this
+  }
+
+  withAmount (amount: number): this {
+    this.amount = amount
+    return this
+  }
+
+  withType (type: TransactionType): this {
+    this.type = type
+    return this
+  }
 }
 
 export const PaymentModel = getModelForClass(Payment)

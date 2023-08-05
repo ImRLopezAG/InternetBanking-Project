@@ -8,6 +8,16 @@ export class Beneficiary extends BaseEntity {
 
   @prop({ required: true, ref: () => User })
   declare receptor: Ref<User>
+
+  withSender (sender: Ref<User>): this {
+    this.sender = sender
+    return this
+  }
+
+  withReceptor (receptor: Ref<User>): this {
+    this.receptor = receptor
+    return this
+  }
 }
 
 export const BeneficiaryModel = getModelForClass(Beneficiary)

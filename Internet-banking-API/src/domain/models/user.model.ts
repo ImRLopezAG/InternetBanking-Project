@@ -34,6 +34,40 @@ export class User extends BaseEntity {
 
   @prop({ enum: UserRole, default: UserRole.Client })
   declare role: UserRole
+
+  withFirstName (firstName: string): this {
+    this.firstName = firstName
+    return this
+  }
+
+  withLastName (lastName: string): this {
+    this.lastName = lastName
+    return this
+  }
+
+  withEmail (email: string): this {
+    this.email = email
+    return this
+  }
+
+  withUsername (username: string): this {
+    this.username = username
+    return this
+  }
+
+  withPassword (password: string): this {
+    this.password = password
+    return this
+  }
+
+  withRole (role: UserRole): this {
+    this.role = role
+    return this
+  }
+
+  async comparePassword (password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password)
+  }
 }
 
 export const UserModel = getModelForClass(User)
