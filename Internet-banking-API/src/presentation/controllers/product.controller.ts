@@ -1,8 +1,8 @@
-import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
+import 'reflect-metadata'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, ProductService } from '../../apps'
-import { Generate, Product } from '../../domain'
+import { Generate, Product, ProductModel } from '../../domain'
 import { IProductController } from '../../interfaces'
 import { AccountType } from '../../utils'
 
@@ -77,35 +77,42 @@ export class ProductController extends GenericController<Product, ProductService
 
   override async Create (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
     try {
-      const entity: Product = req.body
-
-      const { limit } = req.body
-
-      if (!entity.user || !entity.type) {
-        return res.status(400).send(`${!entity.user ? 'User' : 'Type'} is required`)
+      const { limit, type, user, balance } = req.body
+      if (!user || !type) {
+        return res.status(400).send(`${user ? 'User' : 'Type'} is required`)
       }
 
-      if (entity.type === AccountType.CREDIT && !limit) {
+      if (type === AccountType.CREDIT && !limit) {
+        console.log('here limit')
         return res.status(400).send('Limit is required for credit accounts')
       }
 
-      if (limit && entity.type !== AccountType.CREDIT) {
+      if (limit && type !== AccountType.CREDIT) {
+        console.log('here limit 2')
         return res.status(400).send('Limit is only for credit accounts')
       }
       const { cardNumber, pin, cvv, expirationDate, cardHolder } = Generate.card()
 
-      entity.cardNumber = cardNumber
-      entity.pin = pin
-      entity.cvv = cvv
-      entity.expirationDate = expirationDate
-      entity.cardHolder = cardHolder
-      entity.active = true
-      entity.principal = false
-      entity.balance = entity.type !== AccountType.CREDIT ? entity.balance : limit
+      const entity = new ProductModel()
+        .withUser(user)
+        .withType(type)
+        .withCardNumber(cardNumber)
+        .withPin(pin)
+        .withCvv(cvv)
+        .withExpirationDate(expirationDate)
+        .withCardHolder(cardHolder)
+        .isActive(true)
+        .isPrincipal(false)
+        .withBalance(type !== AccountType.CREDIT ? balance : limit)
+        .withLimit(type === AccountType.CREDIT ? limit : 0)
+
+      console.log(entity)
+      req.body = entity
 
       return await super.Create(req, res, next)
     } catch (error) {
       if (error instanceof Error) {
+        console.log(error)
         return next(error)
       }
       return res.status(500).send('Internal server error')

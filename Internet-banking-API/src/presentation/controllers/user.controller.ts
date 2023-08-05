@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { GenericController, UserService } from '../../apps'
-import { Generate, ProductModel, User } from '../../domain'
+import { Generate, User, ProductModel } from '../../domain'
 import { IUserController } from '../../interfaces'
 
 @injectable()
@@ -99,16 +99,16 @@ export class UserController extends GenericController<User, UserService> impleme
         const { balance } = req.body
         const { pin, cvv, expirationDate, cardNumber, cardHolder } = Generate.card()
 
-        const product = new ProductModel({
-          pin,
-          cvv,
-          expirationDate,
-          cardNumber,
-          cardHolder,
-          user: user._id,
-          balance,
-          principal: true
-        })
+        const product = new ProductModel()
+          .withCardNumber(cardNumber)
+          .withPin(pin)
+          .withCvv(cvv)
+          .withExpirationDate(expirationDate)
+          .withCardHolder(cardHolder)
+          .isActive(true)
+          .isPrincipal(true)
+          .withBalance(balance)
+          .withUser(user._id)
 
         await product.save()
         return res.status(201).json({ user, product })
