@@ -2,6 +2,7 @@ export 'package:internet_banking/src/presentation/widget/home.dart';
 export 'package:internet_banking/src/presentation/widget/home_skeleton.dart';
 export 'package:internet_banking/src/presentation/widget/payment.dart';
 export 'package:internet_banking/src/presentation/widget/payment_form.dart';
+export 'package:internet_banking/src/presentation/widget/payment_skeleton.dart';
 export 'package:internet_banking/src/presentation/widget/side_bar.dart';
 export 'package:internet_banking/src/presentation/widget/top_bar.dart';
 export 'package:internet_banking/src/presentation/widget/transfer.dart';

@@ -117,12 +117,12 @@ class _TransferFormState extends State<TransferForm> {
               label: 'Transfer',
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  final transaction = PaymentModel(
-                    sender: _controllers['sender']!.text,
-                    receptor: _controllers['accountNumber']!.text,
-                    type: 2,
-                    amount: int.parse(_controllers['amount']!.text),
-                  );
+                  PaymentModel transaction = PaymentModel()
+                    .setSender(sender: _controllers['sender']!.text)
+                    .setReceptor(receptor: _controllers['accountNumber']!.text)
+                    .setAmount(amount: int.parse(_controllers['amount']!.text))
+                    .setType(type: 2);
+                  
                   print(transaction.toJson());
                   Navigator.pop(context);
                 }

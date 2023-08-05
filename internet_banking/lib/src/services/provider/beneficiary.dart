@@ -11,25 +11,21 @@ class BeneficiaryProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addBeneficiary(
-      {required String token, required UserModel user}) async {
+  Future<bool> addBeneficiary({required String token, required UserModel user}) async {
     try {
-      final beneficiary = BeneficiaryModel(
-        sender: Payload.fromJson(JWT.decode(token).payload).uid,
-        receptor: user.id,
-      );
+      final beneficiary = BeneficiaryModel()
+          .setSender(sender: Payload.fromJson(JWT.decode(token).payload).uid!)
+          .setReceptor(receptor: user.id!);
       await _beneficiaryRepository.create(
           beneficiary: beneficiary, token: token);
       beneficiaries = [..._beneficiaries, user];
-      notifyListeners();
       return true;
     } catch (e) {
       return false;
     }
   }
 
-  Future<List<UserModel>> getAll(
-      {required String token, required String id}) async {
+  Future<List<UserModel>> getAll({required String token, required String id}) async {
     try {
       final response =
           await _beneficiaryRepository.getAll(token: token, sender: id);

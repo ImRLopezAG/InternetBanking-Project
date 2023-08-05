@@ -150,14 +150,14 @@ class _UserFormState extends State<UserForm> {
           ),
         );
       }
-      final user = UserModel(
-        username: _controllers['username']!.text.trim(),
-        password: _controllers['password']!.text.trim(),
-        email: _controllers['email']!.text.trim(),
-        firstName: _controllers['firstName']!.text.trim(),
-        lastName: _controllers['lastName']!.text.trim(),
-        role: 2,
-      );
+      final user = UserModel()
+          .setFirstName(firstName: _controllers['firstName']!.text.trim())
+          .setLastName(lastName: _controllers['lastName']!.text.trim())
+          .setUsername(username: _controllers['username']!.text.trim())
+          .setEmail(email: _controllers['email']!.text.trim())
+          .setPassword(password: _controllers['password']!.text.trim())
+          .setRole(role: 2);
+          
       if (widget.isEdit) {
         user.id = appProvider.user.id;
       }
