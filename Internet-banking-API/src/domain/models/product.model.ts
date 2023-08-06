@@ -37,32 +37,32 @@ export class Product extends BaseEntity {
   @prop({ required: true, ref: () => User })
   declare user: Ref<User>
 
-  withPin (pin: string): this {
+  setPin (pin: string): this {
     this.pin = pin
     return this
   }
 
-  withCvv (cvv: string): this {
+  setCvv (cvv: string): this {
     this.cvv = cvv
     return this
   }
 
-  withExpirationDate (expirationDate: string): this {
+  setExpirationDate (expirationDate: string): this {
     this.expirationDate = expirationDate
     return this
   }
 
-  withCardNumber (cardNumber: string): this {
+  setCardNumber (cardNumber: string): this {
     this.cardNumber = cardNumber
     return this
   }
 
-  withCardHolder (cardHolder: string): this {
+  setCardHolder (cardHolder: string): this {
     this.cardHolder = cardHolder
     return this
   }
 
-  withBalance (balance: number): this {
+  setBalance (balance: number): this {
     this.balance = balance
     return this
   }
@@ -72,7 +72,7 @@ export class Product extends BaseEntity {
     return this
   }
 
-  withLimit (limit: number): this {
+  setLimit (limit: number): this {
     this.limit = limit
     return this
   }
@@ -82,12 +82,12 @@ export class Product extends BaseEntity {
     return this
   }
 
-  withType (type: AccountType): this {
+  setType (type: AccountType): this {
     this.type = type
     return this
   }
 
-  withUser (user: Ref<User>): this {
+  setUser (user: Ref<User>): this {
     this.user = user
     return this
   }

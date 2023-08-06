@@ -29,7 +29,7 @@ export class UserController extends GenericController<User, UserService> impleme
       } else {
         return res
           .status(404)
-          .json({ message: `The user with email ${email} does not exist` })
+          .json({ message: `The user set email ${email} does not exist` })
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -54,7 +54,7 @@ export class UserController extends GenericController<User, UserService> impleme
         return res
           .status(404)
           .json({
-            message: `The user with username ${username} does not exist`
+            message: `The user set username ${username} does not exist`
           })
       }
     } catch (error) {
@@ -100,15 +100,15 @@ export class UserController extends GenericController<User, UserService> impleme
         const { pin, cvv, expirationDate, cardNumber, cardHolder } = Generate.card()
 
         const product = new ProductModel()
-          .withCardNumber(cardNumber)
-          .withPin(pin)
-          .withCvv(cvv)
-          .withExpirationDate(expirationDate)
-          .withCardHolder(cardHolder)
+          .setCardNumber(cardNumber)
+          .setPin(pin)
+          .setCvv(cvv)
+          .setExpirationDate(expirationDate)
+          .setCardHolder(cardHolder)
           .isActive(true)
           .isPrincipal(true)
-          .withBalance(balance)
-          .withUser(user._id)
+          .setBalance(balance)
+          .setUser(user._id)
 
         await product.save()
         return res.status(201).json({ user, product })
