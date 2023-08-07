@@ -3,6 +3,7 @@ import { AccountType } from '../../utils'
 import { BaseEntity } from './base.entity'
 import { User } from './user.model'
 
+
 export class Product extends BaseEntity {
   @prop({ required: true, unique: true })
   declare pin: string
@@ -19,13 +20,13 @@ export class Product extends BaseEntity {
   @prop({ required: true })
   declare cardHolder: string
 
-  @prop({ default: 0 })
+  @prop({ default: 0.00 })
   declare balance: number
 
   @prop({ default: false })
   declare principal: boolean
 
-  @prop({ default: 0 })
+  @prop({ default: 0.00 })
   declare limit: number
 
   @prop({ default: true })

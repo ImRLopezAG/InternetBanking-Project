@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import app from './src/app'
-import { DbContext, UserModel } from '@/domain'
-import { PORT } from '@/utils'
+import {DbContext, UserModel} from './src/domain'
+import {PORT, UserRole} from './src/utils'
 
 DbContext()
   .then(() => {
@@ -9,13 +9,14 @@ DbContext()
 
     UserModel.find({ username: 'admin' }).then((res) => {
       if (!res.length) {
-        user.firstName = 'admin'
-        user.lastName = 'admin'
-        user.username = 'admin'
-        user.password = 'admin'
-        user.email = 'admin@example.com'
-        user.role = 1
-        user.save()
+        user
+          .withFirstName('admin')
+          .withLastName('admin')
+          .withUsername('admin')
+          .withPassword('admin')
+          .withEmail('admin@example.com')
+          .withRole(UserRole.ADMIN)
+          .save()
           .then((res) => console.log(`first user saved:\n ${JSON.stringify(res.toJSON())}`))
           .catch((err) => console.log(err))
       }
