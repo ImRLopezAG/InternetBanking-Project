@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import app from './src/app'
-import { DbContext, UserModel } from './src/domain'
-import { PORT } from './src/utils'
+import { DbContext, UserModel } from '@/domain'
+import { PORT } from '@/utils'
 
 DbContext()
   .then(() => {
