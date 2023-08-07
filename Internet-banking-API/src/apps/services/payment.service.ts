@@ -11,7 +11,7 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
     const { sender, receptor, amount } = entity
     const senderProduct = await ProductModel.findOne({ pin: sender })
     const receptorProduct = await ProductModel.findOne({ pin: receptor })
-    const taxes = amount + (amount * 0.18)
+    const taxes = amount + (amount * 0.08)
 
     if (!senderProduct || !receptorProduct) {
       throw Error('BR: Product not found')
@@ -38,7 +38,7 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
     const product = await ProductModel.findOne({ pin: sender })
     const loan = await ProductModel.findOne({ pin: receptor })
 
-    const taxes = amount + (amount * 0.18)
+    const taxes = amount + (amount * 0.08)
 
     if (product === null || loan === null) {
       throw new Error('BR: Product not found')
@@ -77,7 +77,7 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
     const product = await ProductModel.findOne({ pin: sender })
     const credit = await ProductModel.findOne({ pin: receptor })
 
-    const taxes = amount + (amount * 0.18)
+    const taxes = amount + (amount * 0.08)
 
     if (product === null || credit === null) {
       throw new Error('BR: Product not found')
