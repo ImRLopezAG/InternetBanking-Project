@@ -5,4 +5,6 @@ export interface IPaymentController extends IGenericController {
   GetBySender: (req: Request, res: Response, next: NextFunction) => Promise<Response>
   LoanPayment: (req: Request, res: Response, next: NextFunction) => Promise<Response>
   CreditPayment: (req: Request, res: Response, next: NextFunction) => Promise<Response>
+  GetTransactions: (req: Request, res: Response, next: NextFunction) => Promise<Response>
+  GetPayments: (req: Request, res: Response, next: NextFunction) => Promise<Response>
 }

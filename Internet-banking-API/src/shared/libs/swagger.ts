@@ -231,12 +231,18 @@ const swaggerDefinition: OAS3Definition = {
       },
       SavePayment: {
         type: 'object',
-        required: ['sender', 'receptor', 'amount'],
+        required: ['sender', 'receptor', 'amount', 'type', 'receptorUser', 'owner'],
         properties: {
           sender: {
             type: 'string'
           },
           receptor: {
+            type: 'string'
+          },
+          owner: {
+            type: 'string'
+          },
+          receptorUser: {
             type: 'string'
           },
           type: {
@@ -248,6 +254,14 @@ const swaggerDefinition: OAS3Definition = {
           amount: {
             type: 'number'
           }
+        },
+        example: {
+          sender: 'pin of your product',
+          receptor: 'pin of receptor product',
+          owner: 'your user id',
+          receptorUser: 'receptor user id',
+          type: 2,
+          amount: 500
         }
       },
       Payment: {
@@ -260,6 +274,12 @@ const swaggerDefinition: OAS3Definition = {
             type: 'string'
           },
           receptor: {
+            type: 'string'
+          },
+          owner: {
+            type: 'string'
+          },
+          receptorUser: {
             type: 'string'
           },
           type: {
@@ -1233,6 +1253,100 @@ const swaggerDefinition: OAS3Definition = {
       }
     },
     '/api/payment/list/{sender}': {
+      get: {
+        tags: ['Payment'],
+        summary: 'Get all payments by sender',
+        description: 'Get all payments',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'sender',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'Sender id'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get all payments',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Payment'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/transaction/{owner}': {
+      get: {
+        tags: ['Payment'],
+        summary: 'Get all payments by sender',
+        description: 'Get all transactions',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        parameters: [
+          {
+            in: 'path',
+            name: 'owner',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'owner id'
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Get all payments',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/Payment'
+                  }
+                }
+              }
+            }
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
+    '/api/payment/payment/{owner}': {
       get: {
         tags: ['Payment'],
         summary: 'Get all payments by sender',

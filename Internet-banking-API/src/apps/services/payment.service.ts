@@ -1,6 +1,6 @@
 import { Payment, PaymentModel, ProductModel } from '../../domain'
 import { IPaymentService } from '../../interfaces'
-import { AccountType } from '../../utils'
+import { AccountType, TransactionType } from '../../utils'
 import { GenericService } from '../core'
 export class PaymentService extends GenericService<Payment> implements IPaymentService {
   constructor () {
@@ -8,7 +8,7 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
   }
 
   override async Create (entity: Payment): Promise<Payment> {
-    const { sender, receptor, amount } = entity
+    const { sender, receptor, amount, owner, receptorUser } = entity
     const senderProduct = await ProductModel.findOne({ pin: sender })
     const receptorProduct = await ProductModel.findOne({ pin: receptor })
     const taxes = amount + (amount * 0.08)
@@ -20,16 +20,26 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
       throw new Error('BR: Insufficient funds')
     }
 
-    senderProduct.balance -= taxes
-    receptorProduct.balance += amount
+    senderProduct
+          .setBalance(senderProduct.balance - taxes)
+    receptorProduct
+          .setBalance(receptorProduct.balance + amount)
 
     await ProductModel.findByIdAndUpdate(senderProduct._id, senderProduct)
     await ProductModel.findByIdAndUpdate(receptorProduct._id, receptorProduct)
     return await super.Create(entity)
   }
 
-  async GetBySender (sender: string): Promise<Payment[]> {
-    return await PaymentModel.find({ sender }).exec()
+  async GetBySender (owner: string): Promise<Payment[]> {
+    return await PaymentModel.find({ owner }).exec()
+  }
+
+  async GetTransactions (owner: string): Promise<Payment[]> {
+    return await PaymentModel.find({ $or: [{ owner }, { receptorUser: owner }], $and: [{type: TransactionType.TRANSFER}] }).exec()
+  }
+
+  async GetPayments (owner: string): Promise<Payment[]> {
+    return await PaymentModel.find({ $or: [{ owner }, { receptorUser: owner }], $and: [{type: TransactionType.PAYMENT}] }).exec()
   }
 
   async LoanPayment (entity: Payment): Promise<Payment> {
@@ -72,7 +82,7 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
   }
 
   async CreditPayment (entity: Payment): Promise<Payment> {
-    const { sender, amount, receptor } = entity
+    const { sender, amount, receptor, owner, receptorUser } = entity
 
     const product = await ProductModel.findOne({ pin: sender })
     const credit = await ProductModel.findOne({ pin: receptor })

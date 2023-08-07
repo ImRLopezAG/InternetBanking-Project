@@ -15,6 +15,8 @@ export class PaymentController extends GenericController<Payment, PaymentService
     this.GetBySender = this.GetBySender.bind(this)
     this.LoanPayment = this.LoanPayment.bind(this)
     this.CreditPayment = this.CreditPayment.bind(this)
+    this.GetTransactions = this.GetTransactions.bind(this)
+    this.GetPayments = this.GetPayments.bind(this)
   }
 
   async GetBySender (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
@@ -50,6 +52,30 @@ export class PaymentController extends GenericController<Payment, PaymentService
         return res.status(400).json({ message: error.message })
       }
       return next(error)
+    }
+  }
+
+  async GetTransactions (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { owner } = req.params
+      const transactions = await this.service.GetTransactions(owner)
+      return res.status(200).json(transactions)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
+    }
+  }
+
+  async GetPayments (req: Request, res: Response, next: NextFunction): Promise<Response | any> {
+    try {
+      const { owner } = req.params
+      const payments = await this.service.GetPayments(owner)
+      return res.status(200).json(payments)
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(error)
+      }
     }
   }
 }

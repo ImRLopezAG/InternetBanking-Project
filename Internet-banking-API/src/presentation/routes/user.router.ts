@@ -9,7 +9,7 @@ export const user = Router()
 const controller: UserController = container.resolve(UserController)
 
 user.get('/list', adminValidation, controller.GetAll)
-user.get('/get/:id', ownerValidation, controller.Get)
+user.get('/get/:owner', ownerValidation, controller.Get)
 user.get('/email/:email', controller.GetByEmail)
 user.get('/username/:username', controller.GetByUsername)
 user.get('/search/:query', controller.SearchUser)

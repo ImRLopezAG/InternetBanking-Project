@@ -78,7 +78,7 @@ export const ownerValidation = async (req: Request, res: Response, next: NextFun
   const authorization = req.headers.authorization
   if (authorization === undefined) return res.status(401).json({ error: 'Access denied, you need to login' })
 
-  const { id } = req.params
+  const { owner } = req.params
 
   try {
     const payload = jwtValid({ authorization })
@@ -86,9 +86,10 @@ export const ownerValidation = async (req: Request, res: Response, next: NextFun
     if (payload.message) return res.status(401).json({ error: payload.message })
 
     const user = await services.findById(payload.uid)
-    const entity = await services.findById(id)
 
-    if (user?.id !== entity?.id) {
+    console.log(user)
+    console.log(`are the same: ${user?._id.toString() === owner}`)
+    if (user?._id.toString() !== owner) {
       return res.status(403).json({
         status: 403,
         message: 'The user is not the owner of the resource'
