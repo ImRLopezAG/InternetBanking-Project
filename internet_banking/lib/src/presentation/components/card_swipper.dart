@@ -43,9 +43,7 @@ class CardSwipper extends StatelessWidget {
                         arguments: product,
                       );
                     },
-                    child: Hero(
-                        tag: '${product.id}-from-slider-${product.cvv}',
-                        child: ProductCard(product: product)),
+                    child: ProductCard(product: product),
                   );
                 },
               ),

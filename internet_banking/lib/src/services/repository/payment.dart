@@ -18,10 +18,32 @@ class PaymentRepository {
   }
 
   Future<bool> create({required String token, required PaymentModel beneficiary}) async {
-    final response =
-        await postRequest(endpoint: 'create', token: token, body: beneficiary.toJson());
-    return response['success'];
+    try {
+      await postRequest(endpoint: 'create', token: token, body: beneficiary.toJson());
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
+
+  Future<bool> creditPayment({required String token, required PaymentModel pay}) async {
+    try {
+      await postRequest(endpoint: 'credit', token: token, body: pay.toJson());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> loanPayment({required String token, required PaymentModel pay}) async {
+    try {
+      await postRequest(endpoint: 'loan', token: token, body: pay.toJson());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
 
   Future<dynamic> getRequest({required String endpoint,required String token,String? positional}) async {
     final response = await http.get(

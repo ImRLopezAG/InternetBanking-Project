@@ -46,7 +46,7 @@ class AppState extends StatelessWidget {
         ),
         ChangeNotifierProvider<PaymentProvider>(
           create: (_) => PaymentProvider(),
-          lazy: true,
+          lazy: false,
         ),
         ChangeNotifierProvider<ProductProvider>(
           create: (_) => ProductProvider(),
@@ -54,7 +54,7 @@ class AppState extends StatelessWidget {
         ),
         ChangeNotifierProvider<BeneficiaryProvider>(
           create: (_) => BeneficiaryProvider(),
-          lazy: true,
+          lazy: false,
         ),
       ],
       child: const MainApp(),

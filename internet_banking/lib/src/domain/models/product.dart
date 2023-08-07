@@ -25,9 +25,11 @@ class ProductModel extends BaseModel {
     this.active,
     this.user,
     this.type,
-  });
+    String? id,
+  }) : super(id: id);
 
   ProductModel.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
     pin = json['pin'];
     cvv = json['cvv'];
     expirationDate = json['expirationDate'];

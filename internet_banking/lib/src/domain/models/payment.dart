@@ -29,23 +29,4 @@ class PaymentModel extends BaseModel{
     };
   }
 
-  PaymentModel setSender({required String sender}) {
-    this.sender = sender;
-    return this;
-  }
-
-  PaymentModel setReceptor({required String receptor}) {
-    this.receptor = receptor;
-    return this;
-  }
-
-  PaymentModel setType({required int type}) {
-    this.type = type;
-    return this;
-  }
-
-  PaymentModel setAmount({required int amount}) {
-    this.amount = amount;
-    return this;
-  }
 }

@@ -78,6 +78,7 @@ class _FormFieldsState extends State<FormFields> {
       if (response.success!) {
         Navigator.popAndPushNamed(context, '/home');
         setState(() {});
+        return true;
       } else {
         _loginSuccess = false;
         _responseMessage = response.message!;
@@ -141,6 +142,7 @@ class _FormFieldsState extends State<FormFields> {
             ),
             SubmitButton(
               onPressed: _login,
+              // short: true,
               label: 'Login',
             ),
             const SizedBox(

@@ -20,14 +20,4 @@ class BeneficiaryModel extends BaseModel{
       'receptor': receptor,
     };
   }
-
-  BeneficiaryModel setSender({required String sender}) {
-    this.sender = sender;
-    return this;
-  }
-
-  BeneficiaryModel setReceptor({required String receptor}) {
-    this.receptor = receptor;
-    return this;
-  }
 }

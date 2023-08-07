@@ -41,12 +41,8 @@ class UserScreen extends StatelessWidget {
                               arguments: principal,
                             );
                           },
-                          child: Hero(
-                            tag:
-                                'hero-${principal.id}-principal-${principal.cvv}',
-                            child: ProductCard(
-                              product: principal,
-                            ),
+                          child: ProductCard(
+                            product: principal,
                           ),
                         ),
                       );

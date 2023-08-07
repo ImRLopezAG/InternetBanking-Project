@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from 'express'
-import { authValidation, errorHandler } from './presentation/middleware'
+import { authValidation, errorHandler } from './presentation'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'

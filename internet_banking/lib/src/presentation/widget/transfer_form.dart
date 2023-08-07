@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:internet_banking/src/src.dart';
 import 'package:provider/provider.dart';
@@ -23,12 +25,20 @@ class _TransferFormState extends State<TransferForm> {
     'sender': TextEditingController(),
   };
 
+  bool error = false;
+  PaymentProvider paymentProvider = PaymentProvider();
+  AppProvider appProvider = AppProvider();
+
   @override
   void initState() {
     super.initState();
-    if (widget.isBeneficiary) {
-      _controllers['accountNumber']!.text = widget.product!.pin!;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      paymentProvider = Provider.of<PaymentProvider>(context, listen: false);
+      appProvider = Provider.of<AppProvider>(context, listen: false);
+      if (widget.isBeneficiary) {
+        _controllers['accountNumber']!.text = widget.product!.pin!;
+      }
+    });
   }
 
   @override
@@ -56,6 +66,16 @@ class _TransferFormState extends State<TransferForm> {
               'Transaction',
               style: TextStyle(
                 fontSize: 40.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            Text(
+              error ? 'Error' : '',
+              style: const TextStyle(
+                fontSize: 20.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -115,22 +135,43 @@ class _TransferFormState extends State<TransferForm> {
             ),
             SubmitButton(
               label: 'Transfer',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  PaymentModel transaction = PaymentModel()
-                    .setSender(sender: _controllers['sender']!.text)
-                    .setReceptor(receptor: _controllers['accountNumber']!.text)
-                    .setAmount(amount: int.parse(_controllers['amount']!.text))
-                    .setType(type: 2);
-                  
-                  print(transaction.toJson());
-                  Navigator.pop(context);
-                }
-              },
+              onPressed: () async => _transfer(),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future _transfer() async {
+    if (_formKey.currentState!.validate()) {
+      PaymentModel transaction = PaymentBuilder()
+          .setSender(sender: _controllers['sender']!.text)
+          .setReceptor(receptor: _controllers['accountNumber']!.text)
+          .setAmount(amount: int.parse(_controllers['amount']!.text))
+          .setType(type: 2)
+          .build();
+
+      final response = await paymentProvider.transfer(
+          token: appProvider.token, pay: transaction);
+      if (response.success!) {
+        Navigator.pop(context);
+        return true;
+      } else {
+        setState(() {
+          error = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Transfer failed'),
+          ),
+        );
+        Timer(const Duration(seconds: 2), () {
+          setState(() {
+            error = false;
+          });
+        });
+      }
+    }
   }
 }

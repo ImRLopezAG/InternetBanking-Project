@@ -131,7 +131,7 @@ class _UserFormState extends State<UserForm> {
                 height: 10.0,
               ),
               SubmitButton(
-                  onPressed: saveUser,
+                  onPressed: _saveUser,
                   label: widget.isEdit ? 'Update' : 'Register')
             ],
           ),
@@ -140,7 +140,7 @@ class _UserFormState extends State<UserForm> {
     );
   }
 
-  Future saveUser() async {
+  Future _saveUser() async {
     if (_formKey.currentState!.validate()) {
       if (_controllers['password']!.text !=
           _controllers['confirmPassword']!.text) {
@@ -150,14 +150,15 @@ class _UserFormState extends State<UserForm> {
           ),
         );
       }
-      final user = UserModel()
+      UserModel user = UserBuilder()
           .setFirstName(firstName: _controllers['firstName']!.text.trim())
           .setLastName(lastName: _controllers['lastName']!.text.trim())
           .setUsername(username: _controllers['username']!.text.trim())
           .setEmail(email: _controllers['email']!.text.trim())
           .setPassword(password: _controllers['password']!.text.trim())
-          .setRole(role: 2);
-          
+          .setRole(role: 2)
+          .build();
+
       if (widget.isEdit) {
         user.id = appProvider.user.id;
       }
@@ -170,6 +171,7 @@ class _UserFormState extends State<UserForm> {
           }
         });
         Navigator.of(context).pop();
+        return true;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

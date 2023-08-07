@@ -13,9 +13,10 @@ class BeneficiaryProvider with ChangeNotifier {
 
   Future<bool> addBeneficiary({required String token, required UserModel user}) async {
     try {
-      final beneficiary = BeneficiaryModel()
+      BeneficiaryModel beneficiary = BeneficiaryBuilder()
           .setSender(sender: Payload.fromJson(JWT.decode(token).payload).uid!)
-          .setReceptor(receptor: user.id!);
+          .setReceptor(receptor: user.id!)
+          .build();
       await _beneficiaryRepository.create(
           beneficiary: beneficiary, token: token);
       beneficiaries = [..._beneficiaries, user];
