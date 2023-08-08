@@ -1,0 +1,48 @@
+{
+  "name": "admin-banking",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@nextui-org/button": "^2.0.4",
+    "@nextui-org/card": "^2.0.4",
+    "@nextui-org/divider": "^2.0.4",
+    "@nextui-org/dropdown": "^2.0.4",
+    "@nextui-org/input": "^2.0.4",
+    "@nextui-org/link": "^2.0.4",
+    "@nextui-org/modal": "^2.0.4",
+    "@nextui-org/navbar": "^2.0.4",
+    "@nextui-org/react": "^2.0.5",
+    "@nextui-org/skeleton": "^2.0.4",
+    "@nextui-org/spinner": "^2.0.4",
+    "@nextui-org/table": "^2.0.4",
+    "@nextui-org/tabs": "^2.0.4",
+    "@nextui-org/tooltip": "^2.0.5",
+    "@nextui-org/user": "^2.0.4",
+    "@tanstack/react-query": "^4.32.6",
+    "framer-motion": "^10.15.1",
+    "jose": "^4.14.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.14.2",
+    "zustand": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "ts-standard": "^12.0.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  }
+}
