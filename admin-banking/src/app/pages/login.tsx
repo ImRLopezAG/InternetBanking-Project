@@ -21,8 +21,10 @@ export const Login = (): JSX.Element => {
 
   return (
     <section className='flex flex-col justify-center items-center h-screen gap-4'>
-      <h1 className='text-blue-500 text-4xl'>Internet Banking</h1>
-      <next.Card className='max-w-[400px]'>
+      <h1 className='text-blue-500 text-4xl'>
+        Welcome to <br/><span className='text-default-900 text-3xl'>Cash Bank</span>
+      </h1>
+      <next.Card className='max-w-[600px]'>
         <next.CardHeader className='flex gap-3'>
           <h1>Login</h1>
         </next.CardHeader>

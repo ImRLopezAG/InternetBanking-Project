@@ -1,5 +1,5 @@
 import { UserModel } from '@/models'
-import { createContext, useState } from 'react'
+import { createContext } from 'react'
 import { useAuthStore } from './authStore'
 
 interface AppContextProps {

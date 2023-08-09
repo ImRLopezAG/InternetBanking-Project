@@ -27,13 +27,13 @@
         "./src/app/*"
       ],
       "@components/*": [
-        "./src/components/*"
+        "./src/app/components/*"
       ],
       "@hooks/*": [
         "./src/hooks/*"
       ],
       "@services/*": [
-        "./src/app/services/*"
+        "./src/services/*"
       ],
       "@pages/*": [
         "./src/app/pages/*"

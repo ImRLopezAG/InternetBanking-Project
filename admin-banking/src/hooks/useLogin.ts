@@ -1,5 +1,5 @@
+import { AppContext, useAuthStore } from '@/app/context'
 import { CONSTANTS } from '@/constants'
-import { AppContext, useAuthStore } from '@/context'
 import { UserBuilder, UserModel } from '@/models'
 import { decodeJwt } from 'jose'
 import { useContext, useState } from 'react'
@@ -75,12 +75,18 @@ export function useLogin(): ReturnTypes {
       const data = await res.json()
       const { token } = data
       const payload = decodeJwt(token)
+      if(payload.role !== 1){
+        setLogin({
+          ...login,
+          loading: false
+        })
+        throw new Error('You must be an admin to access this page')
+      }
       setToken(token)
-      console.log(payload.uid)
-      await fetch(`${BASEURL + ROUTES.USER}/username/${payload.sub}`,{
+      await fetch(`${BASEURL + ROUTES.USER}/username/${payload.sub}`, {
         method: 'GET',
         headers: {
-          'authorization': `Bearer ${token}`,
+          authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       }).then(async (res) => {
@@ -104,8 +110,7 @@ export function useLogin(): ReturnTypes {
                     .setRole(role)
                     .build()
           setUser(user)
-        }
-      )
+      })
       setLogin({
         ...login,
         loading: false,
@@ -115,12 +120,14 @@ export function useLogin(): ReturnTypes {
     })
   }
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleLogin = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault()
     await toast.promise(Login(), {
       loading: 'Loading...',
       success: 'Login success!',
-      error: 'invalid username or password'
+      error: (err) => err.message
     })
   }
 

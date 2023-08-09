@@ -1,5 +1,5 @@
 interface IconProps {
-  props: string
+  props?: string
 }
 
 export const Anchor = ({ props }: IconProps) => (

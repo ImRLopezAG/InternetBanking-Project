@@ -36,6 +36,10 @@ export class ProductBuilder {
     this.product = new ProductModel()
   }
 
+  build (): ProductModel {
+    return this.product
+  }
+
   setId (id: string): ProductBuilder {
     this.product.setId(id)
     return this

@@ -15,7 +15,7 @@
       "./src/app/*"
     ],
     "@components/*": [
-      "./src/components/*"
+      "./src/app/components/*"
     ],
     "@hooks/*": [
       "./src/hooks/*"
@@ -24,7 +24,7 @@
       "./src/services/*"
     ],
     "@pages/*": [
-      "./src/pages/*"
+      "./src/app/pages/*"
     ],
   },
   "include": [
