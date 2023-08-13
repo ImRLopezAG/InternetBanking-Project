@@ -1,64 +1,53 @@
 import { useLogin } from '@/hooks'
-import { Eyes, EyesSlash } from '@components/icons'
 import * as next from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
 
 export const Login = (): JSX.Element => {
-  const {
-    form,
-    handleChange,
-    toggleVisibility,
-    handleLogin,
-    isVisible,
-    login
-  } = useLogin()
-
   const navigate = useNavigate()
 
-  if (login.success) {
-    navigate('/home')
-  }
+  const { form, handleChange, handleLogin, login } = useLogin({
+    onSuccess: () => {
+      navigate('/home')
+    }
+  })
+
+  const { state, message } = login.error
 
   return (
-    <section className='flex flex-col justify-center items-center h-screen gap-4'>
+    <section className='flex flex-col justify-center items-center mt-16 gap-4'>
       <h1 className='text-blue-500 text-4xl'>
-        Welcome to <br/><span className='text-default-900 text-3xl'>Cash Bank</span>
+        Welcome to <br />
+        <span className='text-default-900 text-3xl'>Cash Bank</span>
       </h1>
-      <next.Card className='max-w-[600px]'>
+      <next.Card className='w-1/4 max-[32rem]:'>
         <next.CardHeader className='flex gap-3'>
-          <h1>Login</h1>
+          <h1 className='text-4xl'>Login</h1>
         </next.CardHeader>
         <next.CardBody>
           <form className='flex flex-col gap-3' onSubmit={handleLogin}>
-            <label htmlFor='username'>Username</label>
-            <next.Input
-              placeholder='Username'
-              name='username'
-              onChange={handleChange}
-              value={form.username}
-            />
-            <label htmlFor='password'>Password</label>
-            <next.Input
-              placeholder='Enter your password'
-              name='password'
-              onChange={handleChange}
-              value={form.password}
-              endContent={
-                <button
-                  className='focus:outline-none'
-                  type='button'
-                  onClick={toggleVisibility}
-                >
-                  {isVisible ? (
-                    <Eyes props='text-2xl text-default-400 pointer-events-none' />
-                  ) : (
-                    <EyesSlash props='text-2xl text-default-400 pointer-events-none' />
-                  )}
-                </button>
-              }
-              type={isVisible ? 'text' : 'password'}
-              className='max-w-xs'
-            />
+            <div className='flex flex-col min-w-xs'>
+              <label htmlFor='username'>Username</label>
+              <next.Input
+                placeholder='Username'
+                name='username'
+                onChange={handleChange}
+                value={form.username}
+                className={`border-1 border-transparent ${state ? 'border-red-500  rounded-lg' : ''}`}
+              />
+              <span className='text-red-500 text-xs h-2'>{message}</span>
+            </div>
+            <div className='flex flex-col min-w-xs'>
+              <label htmlFor='password'>Password</label>
+              <next.Input
+                placeholder='Enter your password'
+                name='password'
+                onChange={handleChange}
+                value={form.password}
+                type='password'
+                className={`border-1 border-transparent ${state ? 'border-red-500  rounded-lg' : ''}`}
+              />
+              <span className='text-red-500 text-xs h-2'>{message}</span>
+            </div>
             <next.Button
               color='primary'
               radius='full'
@@ -72,7 +61,7 @@ export const Login = (): JSX.Element => {
         <next.CardFooter>
           <p className='text-center text-xs'>
             Don't have an account?{' '}
-            <Link to='/' className='text-blue-500 text-sm'>
+            <Link to='user/sign-up' className='text-blue-500 text-sm'>
               Sign up
             </Link>
           </p>

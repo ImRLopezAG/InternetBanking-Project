@@ -17,47 +17,47 @@ class PaymentProvider with ChangeNotifier {
   }
 
   Future<PaymentError> creditPayment({required String token, required PaymentModel pay}) async {
-    try {
-      await _paymentRepository.creditPayment(token: token, pay: pay);
+    final response = await _paymentRepository.creditPayment(token: token, pay: pay);
+    if (response) {
       _payments = [..._payments, pay];
       notifyListeners();
       return PaymentError()
           .setSuccess(success: true)
           .setMessage(message: 'Payment successful');
-    } catch (e) {
+    } else {
       return PaymentError()
           .setSuccess(success: false)
-          .setMessage(message: 'Payment failed: $e');
+          .setMessage(message: 'Payment failed');
     }
   }
 
   Future<PaymentError> loanPayment({required String token, required PaymentModel pay}) async {
-    try {
-      await _paymentRepository.loanPayment(token: token, pay: pay);
+    final response = await _paymentRepository.loanPayment(token: token, pay: pay);
+    if (response) {
       _payments = [..._payments, pay];
       notifyListeners();
       return PaymentError()
           .setSuccess(success: true)
           .setMessage(message: 'Payment successful');
-    } catch (e) {
-      return  PaymentError()
+    } else {
+      return PaymentError()
           .setSuccess(success: false)
-          .setMessage(message: 'Payment failed: $e');
+          .setMessage(message: 'Payment failed');
     }
   }
 
   Future<PaymentError> transfer({required String token, required PaymentModel pay}) async {
-    try {
-      await _paymentRepository.create(token: token, beneficiary: pay);
+    final response = await _paymentRepository.create(token: token, beneficiary: pay);
+    if (response) {
       _payments = [..._payments, pay];
       notifyListeners();
       return PaymentError()
           .setSuccess(success: true)
           .setMessage(message: 'Payment successful');
-    } catch (e) {
-      return  PaymentError()
+    } else {
+      return PaymentError()
           .setSuccess(success: false)
-          .setMessage(message: 'Payment failed: $e');
+          .setMessage(message: 'Payment failed');
     }
   }
 }

@@ -6,8 +6,8 @@ class ProductModel extends BaseModel {
   String? expirationDate;
   String? cardNumber;
   String? cardHolder;
-  int? balance;
-  int? limit;
+  num? balance;
+  num? limit;
   bool? principal;
   bool? active;
   String? user;

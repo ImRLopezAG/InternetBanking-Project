@@ -8,16 +8,16 @@ export const Toast = (): JSX.Element => {
       gutter={8}
       toastOptions={{
         className: '',
-        duration: 5000,
+        duration: 2000,
         style: {
           background: '#363636',
           color: '#fff'
         },
         success: {
-          duration: 3000
+          duration: 2000
         },
         error: {
-          duration: 3000
+          duration: 2000
         }
       }}
     />

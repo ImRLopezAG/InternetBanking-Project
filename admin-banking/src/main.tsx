@@ -1,4 +1,3 @@
-// million-ignore
 import { Toast } from '@app/components'
 import { router } from '@app/router'
 import { NextUIProvider } from '@nextui-org/react'

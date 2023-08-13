@@ -8,18 +8,22 @@ interface Default{
   token: string | null
 }
 
+interface entity{
+  _id: string
+}
+
 export class UserService{
 
   static instance: UserService
 
-  static getInstance(): UserService {
+  static getInstance (): UserService {
     if (!this.instance) this.instance = new UserService()
     return this.instance
   }
 
-  private constructor() {}
+  private constructor () {}
 
-  async getAll({token}: Default): Promise<UserModel[]> {
+  async getAll ({token}: Default): Promise<UserModel[]> {
     const response = await fetch(`${URL}list`, {
       headers: {
         authorization: `Bearer ${token}`,
@@ -34,7 +38,7 @@ export class UserService{
       return error;
     });
 
-    return response.map((user: any) => {
+    return response.map((user: UserModel & entity) => {
       const { _id, firstName, lastName, email, role, createdAt, username } = user
       return new UserBuilder()
         .setId(_id)
@@ -48,7 +52,7 @@ export class UserService{
     })
   }
 
-  async getById({token, id}: Default & {id: string}): Promise<UserModel> {
+  async getById ({token, id}: Default & {id: string}): Promise<UserModel> {
     const response = await fetch(`${URL}get/${id}`, {
       method: 'GET',
       headers: {

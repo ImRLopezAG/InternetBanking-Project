@@ -142,8 +142,11 @@ class _FormFieldsState extends State<FormFields> {
             ),
             SubmitButton(
               onPressed: _login,
-              // short: true,
               label: 'Login',
+              responses: const {
+                'success': 'Login successful',
+                'error': 'Login failed',
+              },
             ),
             const SizedBox(
               height: 10.0,

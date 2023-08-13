@@ -7,18 +7,20 @@ const URL = `${BASEURL + ROUTES.PRODUCT}/`
 interface Default {
   token: string | null
 }
-
+interface entity{
+  _id: string
+}
 export class ProductService {
   static instance: ProductService
 
-  static getInstance(): ProductService {
+  static getInstance (): ProductService {
     if (!this.instance) this.instance = new ProductService()
     return this.instance
   }
 
-  private constructor() {}
+  private constructor () {}
 
-  async getAll({ token }: Default): Promise<ProductModel[]> {
+  async getAll ({ token }: Default): Promise<ProductModel[]> {
     const response = await fetch(`${URL}list`, {
       headers: {
         authorization: `Bearer ${token}`,
@@ -35,7 +37,7 @@ export class ProductService {
         return error
       })
 
-    return response.map((product: any) => {
+    return response.map((product: ProductModel & entity ) => {
       const { _id, pin, cvv, expirationDate, cardNumber, cardHolder, balance, principal, limit, active, type, user } = product
       return new ProductBuilder()
         .setId(_id)

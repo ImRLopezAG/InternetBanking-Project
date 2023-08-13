@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class SubmitButton extends StatefulWidget {
   final Future Function() onPressed;
   final String? label;
-  const SubmitButton({Key? key, required this.onPressed, this.label = 'Submit'})
+  final Map<String, String>? responses;
+  const SubmitButton(
+      {Key? key,
+      required this.onPressed,
+      this.label = 'Submit',
+      this.responses})
       : super(key: key);
   @override
   State<SubmitButton> createState() => _SubmitButtonState();
@@ -29,12 +34,27 @@ class _SubmitButtonState extends State<SubmitButton> {
           setState(() {
             _isLoading = false;
           });
-          _showToast(
+          if (value != null) {
+            _showToast(
               context: context,
               toast: Toast()
-                  .setMessage(value ? 'Success' : 'Failed')
-                  .setSuccess(value)
-                  .setStatus(value ? ToastStatus.success : ToastStatus.error));
+                  .setMessage(widget.responses != null
+                      ? widget.responses!['success']!
+                      : 'Success')
+                  .setSuccess(true)
+                  .setStatus(ToastStatus.success),
+            );
+          } else {
+            _showToast(
+              context: context,
+              toast: Toast()
+                  .setMessage(widget.responses != null
+                      ? widget.responses!['error']!
+                      : 'Failed')
+                  .setSuccess(false)
+                  .setStatus(ToastStatus.error),
+            );
+          }
         });
         setState(() {
           _isLoading = false;
@@ -84,65 +104,67 @@ class _SubmitButtonState extends State<SubmitButton> {
   }
 
   void _showToast({required BuildContext context, required Toast toast}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            50.0,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        behavior: SnackBarBehavior.floating,
-        width: 200,
-        duration: toast.duration ?? const Duration(milliseconds: 500),
-        elevation: 0.0,
-        content: Center(
-          child: Container(
-            height: 40.0,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade900,
-              borderRadius: BorderRadius.circular(
-                50.0,
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10.0,
-            ),
-            child: Row(
-              children: [
-                toast.status == ToastStatus.loading
-                    ? const SizedBox(
-                        height: 12.0,
-                        width: 12.0,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2.0,
-                        ),
-                      )
-                    : Icon(
-                        toast.success!
-                            ? Icons.check_circle_rounded
-                            : Icons.error_rounded,
-                        color: toast.success! ? Colors.green : Colors.red,
-                      ),
-                const SizedBox(
-                  width: 15,
+    final overlayState = Overlay.of(context);
+    final toastOverlay = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: MediaQuery.of(context).padding.top + 16.0,
+        left: 16.0,
+        right: 16.0,
+        child: Center(
+          child: IntrinsicWidth(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 48.0,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade900,
+                borderRadius: BorderRadius.circular(
+                  50.0,
                 ),
-                Center(
-                  child: Text(
-                    toast.message!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+              ),
+              child: Row(
+                children: [
+                  toast.status == ToastStatus.loading
+                      ? const SizedBox(
+                          height: 12.0,
+                          width: 12.0,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : Icon(
+                          toast.success!
+                              ? Icons.check_circle_rounded
+                              : Icons.error_rounded,
+                          color: toast.success! ? Colors.green : Colors.red,
+                        ),
+                  Flexible(
+                    child: Center(
+                      child: Text(
+                        toast.message!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.none,
+                        ),
+                        softWrap: true,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+    overlayState.insert(toastOverlay);
+    Future.delayed(toast.duration ?? const Duration(milliseconds: 1500)).then(
+      (_) => toastOverlay.remove(),
     );
   }
 }

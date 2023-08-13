@@ -20,6 +20,7 @@ class BeneficiaryProvider with ChangeNotifier {
       await _beneficiaryRepository.create(
           beneficiary: beneficiary, token: token);
       beneficiaries = [..._beneficiaries, user];
+      notifyListeners();
       return true;
     } catch (e) {
       return false;

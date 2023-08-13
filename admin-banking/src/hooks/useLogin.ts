@@ -1,10 +1,6 @@
-import { AppContext, useAuthStore } from '@/app/context'
-import { CONSTANTS } from '@/constants'
-import { UserBuilder, UserModel } from '@/models'
-import { decodeJwt } from 'jose'
-import { useContext, useState } from 'react'
-import toast from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
+import { AuthService } from '@/services'
+import { AppContext } from '@app/context'
+import { useCallback, useContext, useState } from 'react'
 
 interface LoginForm {
   username: string
@@ -12,124 +8,117 @@ interface LoginForm {
 }
 
 interface LoginResponse {
-  message: string
   loading: boolean
-  success?: boolean
-  data: {
-    token: string
-    success: boolean
+  success: boolean
+  error: {
+    message: string
+    state: boolean
   }
+}
+
+interface useLoginProps {
+  onSuccess: () => void
 }
 
 interface ReturnTypes {
   form: LoginForm
   login: LoginResponse
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleLogin: (e: React.FormEvent<HTMLFormElement>) => void
-  toggleVisibility: () => void
-  isVisible: boolean
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleLogin: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
 }
 
-export function useLogin(): ReturnTypes {
-  const { BASEURL, ROUTES } = CONSTANTS
+export const useLogin = ({ onSuccess }: useLoginProps): ReturnTypes => {
+  const service = AuthService.getInstance()
   const [form, setForm] = useState<LoginForm>({
     username: '',
     password: ''
   })
-  const [isVisible, setIsVisible] = useState(false)
-
   const [login, setLogin] = useState<LoginResponse>({
-    message: '',
     loading: false,
-    data: {
-      success: false,
-      token: ''
+    success: false,
+    error: {
+      message: '',
+      state: false
     }
   })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const toggleVisibility = (): void => setIsVisible(!isVisible)
-
   const { setUser, setToken } = useContext(AppContext)
 
-  const Login = async (): Promise<void> => {
-    setLogin({ ...login, loading: true })
-    await fetch(`${BASEURL + ROUTES.AUTH}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    }).then(async (res) => {
-      if (!res.ok) {
-        setLogin({
-          ...login,
-          loading: false
-        })
-        throw new Error('invalid username or password')
-      }
-      const data = await res.json()
-      const { token } = data
-      const payload = decodeJwt(token)
-      if(payload.role !== 1){
-        setLogin({
-          ...login,
-          loading: false
-        })
-        throw new Error('You must be an admin to access this page')
-      }
-      setToken(token)
-      await fetch(`${BASEURL + ROUTES.USER}/username/${payload.sub}`, {
-        method: 'GET',
-        headers: {
-          authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value
+    }))
+  }
+
+
+  const handleLogin = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+      e.preventDefault()
+      setLogin((prevLogin) => ({
+        ...prevLogin,
+        loading: true,
+        success: false,
+        error: {
+          message: '',
+          state: false
         }
-      }).then(async (res) => {
-          if (!res.ok) {
-            setLogin({
-              ...login,
-              loading: false
-            })
-            throw new Error('error getting user')
-          }
-          const data = await res.json()
-          const {firstName, lastName, username, email, createdAt, role}:UserModel = data
-          const {_id} = data
-          const user = new UserBuilder()
-                    .setId(_id)
-                    .setFirstName(firstName)
-                    .setLastName(lastName)
-                    .setUsername(username)
-                    .setEmail(email)
-                    .setCreatedAt(createdAt)
-                    .setRole(role)
-                    .build()
+      }))
+      try {
+        const { success, data, message } = await service.login({ ...form })
+        if (success) {
+          const { token, user } = data
           setUser(user)
-      })
-      setLogin({
-        ...login,
-        loading: false,
-        success: true,
-        data
-      })
-    })
-  }
+          setToken(token)
+          onSuccess()
+          setLogin({
+            loading: false,
+            success: true,
+            error: {
+              message: '',
+              state: false
+            }
+          })
+        } else {
+          setLogin((prevLogin) => ({
+            ...prevLogin,
+            loading: false,
+            success: false,
+            error: {
+              message,
+              state: true
+            }
+          }))
+        }
+      } catch (error: any) {
+        setLogin((prevLogin) => ({
+          ...prevLogin,
+          loading: false,
+          success: false,
+          error: {
+            message: error.message,
+            state: true
+          }
+        }))
+      }
+      setTimeout(() => {
+        setLogin((prevLogin) => ({
+          ...prevLogin,
+          error: {
+            message: '',
+            state: false
+          }
+        }))
+      }, 3000)
+    },
+    [form, onSuccess, service, setUser, setToken]
+  )
 
-  const handleLogin = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    e.preventDefault()
-    await toast.promise(Login(), {
-      loading: 'Loading...',
-      success: 'Login success!',
-      error: (err) => err.message
-    })
+  return {
+    form,
+    handleChange,
+    handleLogin,
+    login
   }
-
-  return { form, login, handleChange, handleLogin, toggleVisibility, isVisible }
 }

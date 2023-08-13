@@ -31,4 +31,14 @@ class PaymentBuilder{
     _payment.amount = amount;
     return this;
   }
+
+  PaymentBuilder setOwner({required String owner}) {
+    _payment.owner = owner;
+    return this;
+  }
+
+  PaymentBuilder setReceptorUser({required String receptorUser}) {
+    _payment.receptorUser = receptorUser;
+    return this;
+  }
 }

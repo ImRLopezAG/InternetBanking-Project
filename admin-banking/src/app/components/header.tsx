@@ -22,9 +22,7 @@ export const Header = (): JSX.Element => {
 
   return (
     <header className='flex justify-evenly items-start'>
-      <h1 className='text-default-900'>
-        Cash Bank
-      </h1>
+      <h1 className='text-default-900'>Cash Bank</h1>
       <nav className='flex gap-2 [&>a]:text-blue-500 [&>a]:text-2xl items-baseline content-between'>
         <Link to='/home'>Home</Link>
         <Link to='/user'>User</Link>
@@ -53,7 +51,7 @@ export const Header = (): JSX.Element => {
           )}
         </Button>
       </nav>
-      <div/>
+      <div />
     </header>
   )
 }

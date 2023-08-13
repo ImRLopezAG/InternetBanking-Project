@@ -23,6 +23,7 @@ class _TransferFormState extends State<TransferForm> {
     'accountNumber': TextEditingController(),
     'amount': TextEditingController(),
     'sender': TextEditingController(),
+    'receptor': TextEditingController(),
   };
 
   bool error = false;
@@ -37,6 +38,7 @@ class _TransferFormState extends State<TransferForm> {
       appProvider = Provider.of<AppProvider>(context, listen: false);
       if (widget.isBeneficiary) {
         _controllers['accountNumber']!.text = widget.product!.pin!;
+        _controllers['receptor']!.text = widget.product!.user!;
       }
     });
   }
@@ -134,9 +136,12 @@ class _TransferFormState extends State<TransferForm> {
               height: 10.0,
             ),
             SubmitButton(
-              label: 'Transfer',
-              onPressed: () async => _transfer(),
-            ),
+                label: 'Transfer',
+                onPressed: () async => _transfer(),
+                responses: const {
+                  'success': 'Transfer successful',
+                  'error': 'Transfer failed',
+                }),
           ],
         ),
       ),
@@ -150,6 +155,8 @@ class _TransferFormState extends State<TransferForm> {
           .setReceptor(receptor: _controllers['accountNumber']!.text)
           .setAmount(amount: int.parse(_controllers['amount']!.text))
           .setType(type: 2)
+          .setOwner(owner: appProvider.user.id!)
+          .setReceptorUser(receptorUser: _controllers['receptor']!.text)
           .build();
 
       final response = await paymentProvider.transfer(

@@ -1,8 +1,9 @@
-import { AppContext } from '@/app/context'
 import { Home, Login, Payment, Product, User } from '@/app/pages'
-import { useContext } from 'react'
-import { Navigate, createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import { App } from './App'
+import { SaveUser } from '@pages/user/save'
+import { SaveProduct } from '@pages/product/save'
+import { ProtectedRoute } from './ProtectedRoute'
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,15 @@ export const router = createBrowserRouter([
       },
       {
         path: 'user',
-        element: <ProtectedRoute element={<User />} />
+        element: <ProtectedRoute element={<User />} />,
+      },
+      {
+        path: 'user/create',
+        element: <ProtectedRoute element={<SaveUser isEdit/>} />
+      },
+      {
+        path: 'user/sign-up',
+        element: <SaveUser />
       },
       {
         path: 'payment',
@@ -27,21 +36,13 @@ export const router = createBrowserRouter([
       },
       {
         path: 'product',
-        element: <ProtectedRoute element={<Product />} />
+        element: <ProtectedRoute element={<Product />} />,
+      },
+      {
+        path: 'product/create',
+        element: <ProtectedRoute element={<SaveProduct />} />
       }
     ]
   }
 ])
 
-interface ProtectedRouteProps {
-  element: React.ReactNode
-}
-
-export function ProtectedRoute({ element }: ProtectedRouteProps): JSX.Element {
-  const { user } = useContext(AppContext)
-  if (!user) {
-    return <Navigate to='/login' />
-  }
-
-  return <>{element}</>
-}
