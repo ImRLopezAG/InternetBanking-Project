@@ -1,12 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Input
-} from '@nextui-org/react'
+import * as next from '@nextui-org/react'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -56,7 +48,7 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           <h1 className='text-4xl font-bold'>{isEdit ? 'Edit' : 'Create'} User</h1>
         </div>
         <label htmlFor='name'>Name</label>
-        <Input
+        <next.Input
           name='name'
           id='name'
           placeholder='First Name'
@@ -64,7 +56,7 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           onChange={handleChange}
         />
         <label htmlFor='lastName'>Last Name</label>
-        <Input
+        <next.Input
           name='lastName'
           id='lastName'
           placeholder='Last Name'
@@ -72,7 +64,7 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           onChange={handleChange}
         />
         <label htmlFor='email'>Email</label>
-        <Input
+        <next.Input
           name='email'
           id='email'
           placeholder='Email'
@@ -80,7 +72,7 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           onChange={handleChange}
         />
         <label htmlFor='password'>Password</label>
-        <Input
+        <next.Input
           name='password'
           id='password'
           type='password'
@@ -89,7 +81,7 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           onChange={handleChange}
         />
         <label htmlFor='confirmPassword'>Confirm Password</label>
-        <Input
+        <next.Input
           name='confirmPassword'
           id='confirmPassword'
           placeholder='Confirm Password'
@@ -100,33 +92,33 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
         {isEdit && (
           <>
             <label htmlFor='role'>Role</label>
-            <Dropdown size='lg'>
-              <DropdownTrigger>
-                <Button variant='bordered'>Open Menu</Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label='Dynamic Actions'>
-                <DropdownItem
+            <next.Dropdown size='lg'>
+              <next.DropdownTrigger>
+                <next.Button variant='bordered'>Open Menu</next.Button>
+              </next.DropdownTrigger>
+              <next.DropdownMenu aria-label='Dynamic Actions'>
+                <next.DropdownItem
                   onClick={() => setForm({ ...form, role: 2 })}
                 >
                   Client
-                </DropdownItem>
-                <DropdownItem
+                </next.DropdownItem>
+                <next.DropdownItem
                   onClick={() => setForm({ ...form, role: 1 })}
                 >
                   Admin
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+                </next.DropdownItem>
+              </next.DropdownMenu>
+            </next.Dropdown>
           </>
         )}
-        <ButtonGroup fullWidth>
-          <Button color='danger' size='sm' type='button' onClick={handleBack}>
+        <next.ButtonGroup fullWidth>
+          <next.Button color='danger' size='sm' type='button' onClick={handleBack}>
             Cancel
-          </Button>
-          <Button color='primary' size='sm' type='submit'>
+          </next.Button>
+          <next.Button color='primary' size='sm' type='submit'>
             Save
-          </Button>
-        </ButtonGroup>
+          </next.Button>
+        </next.ButtonGroup>
       </form>
     </div>
   )

@@ -1,9 +1,9 @@
-import { ProductModel, UserModel } from '@/models'
+import { ProductModel } from '@/models'
 import { ProductService } from '@/services'
 import { AppContext } from '@app/context'
 import { Delete, Edit, Eyes } from '@components/icons'
 import * as next from '@nextui-org/react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useCallback, useContext, useEffect, useState } from 'react'
 
 interface Column {
@@ -20,30 +20,21 @@ interface ReturnType {
 export function useProduct (): ReturnType {
   const { token } = useContext(AppContext)
   const [products, setProducts] = useState<ProductModel[]>([])
-  const [users, setUsers] = useState<UserModel[]>([])
-
   const service = ProductService.getInstance()
   const { data, isSuccess, ...query } = useQuery({
     queryKey: ['product-list'],
     queryFn: async () => await service.getAll({ token })
   })
 
-  const queryClient = useQueryClient()
-
-  const userData: UserModel[] | undefined = queryClient.getQueryData([
-    'user-list'
-  ])
 
   useEffect(() => {
     if (isSuccess) {
       setProducts(data)
-      setUsers(userData!)
     }
   }, [query])
 
   const columns: Column[] = [
     { uid: 'pin', name: 'Pin' },
-    { uid: 'user', name: 'Owner' },
     { uid: 'type', name: 'Type' },
     { uid: 'balance', name: 'Balance' },
     { uid: 'actions', name: 'Actions' }
@@ -59,11 +50,6 @@ export function useProduct (): ReturnType {
     (product: ProductModel, columnKey: React.Key) => {
       const elements: Record<string, JSX.Element> = {
         pin: <p className='text-bold text-sm capitalize'>{product.pin}</p>,
-        user: (
-          <p className='text-bold text-sm capitalize'>
-            {users.find((user) => user.id === product.user)?.firstName}
-          </p>
-        ),
         type: (
           <p className='text-bold text-sm capitalize'>
             {productTypes[product.type]}
@@ -94,7 +80,7 @@ export function useProduct (): ReturnType {
       }
       return elements[columnKey]
     },
-    [users]
+    []
   )
   return { products, columns, renderCell }
 }

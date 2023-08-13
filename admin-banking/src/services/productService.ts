@@ -7,8 +7,25 @@ const URL = `${BASEURL + ROUTES.PRODUCT}/`
 interface Default {
   token: string | null
 }
-interface entity{
+interface entity {
   _id: string
+}
+interface Balance {
+  pin: string
+  balance: number
+}
+
+interface ProductCreate {
+  user: string
+  balance: number
+  type: number
+  limit?: number
+}
+
+interface Response {
+  message: string
+  success?: boolean
+  data: object
 }
 export class ProductService {
   static instance: ProductService
@@ -29,9 +46,10 @@ export class ProductService {
     })
       .then(async (response) => {
         const data = await response.json()
-        if (response.ok) {
-          return data
+        if (!response.ok) {
+          return []
         }
+        return data
       })
       .catch((error) => {
         return error
@@ -54,5 +72,73 @@ export class ProductService {
         .setUser(user)
         .build()
     })
+  }
+
+  async create ({ token, ...product }: ProductCreate & Default): Promise<Response> {
+    return await fetch(`${URL}create`, {
+      method: 'POST',
+      body: JSON.stringify(product),
+      headers: {
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(async (response) => {
+        const data = await response.json()
+        if (!response.ok) {
+          return {
+            message: 'error creating product',
+            success: false,
+            data: {}
+          }
+        }
+        return {
+          message: 'success',
+          success: true,
+          data
+        }
+      })
+      .catch((error) => {
+        return error
+      })
+  }
+
+  async addBalance ({ token,...balance }: Balance & Default): Promise<ProductModel> {
+    return await fetch(`${URL}add-balance`, {
+      method: 'POST',
+      body: JSON.stringify(balance),
+      headers: {
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(async (response) => {
+        const data = await response.json()
+        if (response.ok) {
+          return data
+        }
+      })
+      .catch((error) => {
+        return error
+      })
+  }
+
+  async delete ({token,...product }: ProductModel & Default): Promise<void> {
+    return await fetch(`${URL}delete/${product.id}`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(async (response) => {
+        const data = await response.json()
+        if (response.ok) {
+          return data
+        }
+      })
+      .catch((error) => {
+        return error
+      })
   }
 }

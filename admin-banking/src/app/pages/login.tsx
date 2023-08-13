@@ -19,7 +19,7 @@ export const Login = (): JSX.Element => {
         Welcome to <br />
         <span className='text-default-900 text-3xl'>Cash Bank</span>
       </h1>
-      <next.Card className='w-1/4 max-[32rem]:'>
+      <next.Card className='max-[48rem]:'>
         <next.CardHeader className='flex gap-3'>
           <h1 className='text-4xl'>Login</h1>
         </next.CardHeader>
@@ -46,7 +46,6 @@ export const Login = (): JSX.Element => {
                 type='password'
                 className={`border-1 border-transparent ${state ? 'border-red-500  rounded-lg' : ''}`}
               />
-              <span className='text-red-500 text-xs h-2'>{message}</span>
             </div>
             <next.Button
               color='primary'

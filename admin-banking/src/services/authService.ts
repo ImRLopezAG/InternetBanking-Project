@@ -8,13 +8,18 @@ interface LoginForm {
 
 interface LoginResponse {
   message: string
-  loading: boolean
   success?: boolean
   data: {
     token: string
     success: boolean
     user: UserModel
   }
+}
+
+interface Response{
+  message: string
+  success?: boolean
+  data: object
 }
 
 const { BASEURL, ROUTES } = CONSTANTS
@@ -46,7 +51,6 @@ export class AuthService {
     if (payload.role !== 1) {
       return {
         message: 'You are not an admin',
-        loading: false,
         success: false,
         data: {
           token,
@@ -92,7 +96,6 @@ export class AuthService {
 
     return {
       message: 'success',
-      loading: false,
       success: true,
       data: {
         token,
@@ -101,4 +104,63 @@ export class AuthService {
       }
     }
   }
+
+  async register ({ ...form }: UserModel): Promise<Response> {
+    return await fetch(`${BASEURL + ROUTES.AUTH}/sign-up`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    }).then(async (response) => {
+      const data = await response.json()
+      if (!response.ok) {
+        return {
+          message: response.statusText,
+          success: false,
+          data: {}
+        }
+      }
+      return {
+        message: 'success',
+        success: true,
+        data
+      }
+    })
+  }
+
+  async update ({ token, ...user }: UserModel & { token: string }): Promise<Response> {
+    return await fetch(`${BASEURL + ROUTES.USER}/${user.id}`, {
+      method: 'PUT',
+      headers: {
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    }).then(async (response) => {
+      const data = await response.json()
+      if (!response.ok) {
+        return {
+          message: response.statusText,
+          success: false,
+          data: {}
+        }
+      }
+      
+      const { firstName, lastName, username, email, createdAt, role }: UserModel = data
+      const { _id } = data
+      return {
+        message: 'success',
+        success: true,
+        data: new UserBuilder()
+          .setId(_id)
+          .setFirstName(firstName)
+          .setLastName(lastName)
+          .setUsername(username)
+          .setEmail(email)
+          .setCreatedAt(createdAt)
+          .setRole(role)
+          .build()
+      }
+    })
+  }
 }
+

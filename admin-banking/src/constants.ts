@@ -1,8 +1,6 @@
 interface CONSTANTS {
   BASEURL: string
-  ROUTES: {
-    [key: string]: string
-  }
+  ROUTES: Record<string, string>
 }
 
 export const CONSTANTS: CONSTANTS = {

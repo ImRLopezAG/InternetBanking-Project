@@ -1,9 +1,9 @@
 import { Home, Login, Payment, Product, User } from '@/app/pages'
-import { createBrowserRouter } from 'react-router-dom'
-import { App } from './App'
-import { SaveUser } from '@pages/user/save'
 import { SaveProduct } from '@pages/product/save'
-import { ProtectedRoute } from './ProtectedRoute'
+import { SaveUser } from '@pages/user/save'
+import { createBrowserRouter } from 'react-router-dom'
+import { ProtectedRoute } from './'
+import { App } from './App'
 
 export const router = createBrowserRouter([
   {
@@ -45,4 +45,3 @@ export const router = createBrowserRouter([
     ]
   }
 ])
-
