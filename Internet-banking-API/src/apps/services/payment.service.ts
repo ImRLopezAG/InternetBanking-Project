@@ -21,9 +21,9 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
     }
 
     senderProduct
-          .setBalance(senderProduct.balance - taxes)
+      .setBalance(senderProduct.balance - taxes)
     receptorProduct
-          .setBalance(receptorProduct.balance + amount)
+      .setBalance(receptorProduct.balance + amount)
 
     await ProductModel.findByIdAndUpdate(senderProduct._id, senderProduct)
     await ProductModel.findByIdAndUpdate(receptorProduct._id, receptorProduct)
@@ -35,11 +35,11 @@ export class PaymentService extends GenericService<Payment> implements IPaymentS
   }
 
   async GetTransactions (owner: string): Promise<Payment[]> {
-    return await PaymentModel.find({ $or: [{ owner }, { receptorUser: owner }], $and: [{type: TransactionType.TRANSFER}] }).exec()
+    return await PaymentModel.find({ $or: [{ owner }, { receptorUser: owner }], $and: [{ type: TransactionType.TRANSFER }] }).sort({ createdAt: -1 }).exec()
   }
 
   async GetPayments (owner: string): Promise<Payment[]> {
-    return await PaymentModel.find({ $or: [{ owner }, { receptorUser: owner }], $and: [{type: TransactionType.PAYMENT}] }).exec()
+    return await PaymentModel.find({ $or: [{ owner }, { receptorUser: owner }], $and: [{ type: TransactionType.PAYMENT }] }).sort({ createdAt: -1 }).exec()
   }
 
   async LoanPayment (entity: Payment): Promise<Payment> {
