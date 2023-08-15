@@ -11,15 +11,13 @@ class PaymentRepository {
   PaymentRepository._internal();
   factory PaymentRepository() => _instance;
 
-  Future<List<PaymentModel>> getAll(
-      {required String token, required String sender}) async {
+  Future<List<PaymentModel>> getAll({required String token, required String sender}) async {
     final response = await getRequest(
         endpoint: 'list', token: token, positional: sender);
     return (response as List).map((e) => PaymentModel.fromJson(e)).toList();
   }
 
-  Future<List<PaymentModel>> getTransactions(
-      {required String token, required String sender}) async {
+  Future<List<PaymentModel>> getTransactions({required String token, required String sender}) async {
     final response = await getRequest(
         endpoint: 'transaction', token: token, positional: sender);
     return (response as List).map((e) => PaymentModel.fromJson(e)).toList();
@@ -32,8 +30,7 @@ class PaymentRepository {
     return (response as List).map((e) => PaymentModel.fromJson(e)).toList();
   }
 
-  Future<bool> create(
-      {required String token, required PaymentModel beneficiary}) async {
+  Future<bool> create({required String token, required PaymentModel beneficiary}) async {
     try {
       final response = await postRequest(
           endpoint: 'create', token: token, body: beneficiary.toJson());
@@ -43,8 +40,7 @@ class PaymentRepository {
     }
   }
 
-  Future<bool> creditPayment(
-      {required String token, required PaymentModel pay}) async {
+  Future<bool> creditPayment({required String token, required PaymentModel pay}) async {
     try {
       final response = await postRequest(
           endpoint: 'credit', token: token, body: pay.toJson());
@@ -54,8 +50,7 @@ class PaymentRepository {
     }
   }
 
-  Future<bool> loanPayment(
-      {required String token, required PaymentModel pay}) async {
+  Future<bool> loanPayment({required String token, required PaymentModel pay}) async {
     try {
       final response =
           await postRequest(endpoint: 'loan', token: token, body: pay.toJson());
@@ -65,10 +60,7 @@ class PaymentRepository {
     }
   }
 
-  Future<dynamic> getRequest(
-      {required String endpoint,
-      required String token,
-      String? positional}) async {
+  Future<dynamic> getRequest( {required String endpoint,required String token,String? positional}) async {
     final response = await http.get(
         Uri.https(_baseUrl, '${_endpoint + endpoint}/$positional'),
         headers: {
@@ -82,8 +74,7 @@ class PaymentRepository {
     }
   }
 
-  Future<Response> postRequest(
-      {required String endpoint, required String token, dynamic body}) async {
+  Future<Response> postRequest({required String endpoint, required String token, dynamic body}) async {
     final response = await http.post(Uri.https(_baseUrl, _endpoint + endpoint),
         body: json.encode(body),
         headers: {
