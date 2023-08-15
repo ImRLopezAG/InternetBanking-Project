@@ -1,4 +1,4 @@
-import { useLogin } from '@/hooks'
+import { useLogin } from '@/app/hooks'
 import * as next from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -32,7 +32,9 @@ export const Login = (): JSX.Element => {
                 name='username'
                 onChange={handleChange}
                 value={form.username}
-                className={`border-1 border-transparent ${state ? 'border-red-500  rounded-lg' : ''}`}
+                className={`border-1 border-transparent ${
+                  state ? 'border-red-500  rounded-lg' : ''
+                }`}
               />
               <span className='text-red-500 text-xs h-2'>{message}</span>
             </div>
@@ -44,7 +46,9 @@ export const Login = (): JSX.Element => {
                 onChange={handleChange}
                 value={form.password}
                 type='password'
-                className={`border-1 border-transparent ${state ? 'border-red-500  rounded-lg' : ''}`}
+                className={`border-1 border-transparent ${
+                  state ? 'border-red-500  rounded-lg' : ''
+                }`}
               />
             </div>
             <next.Button

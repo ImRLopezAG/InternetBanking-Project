@@ -1,4 +1,4 @@
-import { useProduct } from '@/hooks'
+import { useProduct } from '@/app/hooks'
 import { ProductModel } from '@/models'
 import { Table } from '@app/components'
 

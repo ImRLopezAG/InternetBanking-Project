@@ -92,6 +92,7 @@ export class ProductService {
             data: {}
           }
         }
+        console.log('setting data')
         return {
           message: 'success',
           success: true,
@@ -115,6 +116,7 @@ export class ProductService {
       .then(async (response) => {
         const data = await response.json()
         if (response.ok) {
+          console.log(data)
           return data
         }
       })

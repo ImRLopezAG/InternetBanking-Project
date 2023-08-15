@@ -1,4 +1,4 @@
-import { useUser } from '@/hooks'
+import { useUser } from '@/app/hooks'
 import { UserModel } from '@/models'
 import { Table } from '@app/components'
 

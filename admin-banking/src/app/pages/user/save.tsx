@@ -3,11 +3,13 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 interface Form {
-  name: string
+  firstName: string
   lastName: string
   email: string
+  username: string
   password: string
   confirmPassword: string
+  balance: number
   role?: number
 }
 
@@ -17,23 +19,26 @@ interface Props {
 
 export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
   const [form, setForm] = useState<Form>({
-    name: '',
+    firstName: '',
     lastName: '',
     email: '',
     password: '',
+    username: '',
     confirmPassword: '',
-    role: 2
+    role: 2,
+    balance: 0
   })
 
   const location = useLocation()
   const navigate = useNavigate()
 
-  const handleBack = () => location.pathname.includes('create') ? navigate('/user') : navigate(-1)
-  
+  const handleBack = () =>
+    location.pathname.includes('create') ? navigate('/user') : navigate(-1)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(form)
+    const { balance, ...data} = form
+    console.log(data, Number(balance))
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,14 +50,16 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
     <div className='flex justify-center w-full items-center'>
       <form className='flex flex-col gap-3 w-2/4  ' onSubmit={handleSubmit}>
         <div className='flex justify-center'>
-          <h1 className='text-4xl font-bold'>{isEdit ? 'Edit' : 'Create'} User</h1>
+          <h1 className='text-4xl font-bold'>
+            {isEdit ? 'Create ' : 'Create'} User
+          </h1>
         </div>
         <label htmlFor='name'>Name</label>
         <next.Input
-          name='name'
-          id='name'
+          name='firstName'
+          id='firstName'
           placeholder='First Name'
-          value={form.name}
+          value={form.firstName}
           onChange={handleChange}
         />
         <label htmlFor='lastName'>Last Name</label>
@@ -61,6 +68,14 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           id='lastName'
           placeholder='Last Name'
           value={form.lastName}
+          onChange={handleChange}
+        />
+        <label htmlFor='username'>Username</label>
+        <next.Input
+          name='username'
+          id='username'
+          placeholder='Username'
+          value={form.username}
           onChange={handleChange}
         />
         <label htmlFor='email'>Email</label>
@@ -91,10 +106,21 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
         />
         {isEdit && (
           <>
+            <label htmlFor='balance'>Balance</label>
+            <next.Input
+              name='balance'
+              id='balance'
+              placeholder='Balance'
+              type='number'
+              value={form.balance.toString()}
+              onChange={handleChange}
+            />
             <label htmlFor='role'>Role</label>
             <next.Dropdown size='lg'>
               <next.DropdownTrigger>
-                <next.Button variant='bordered'>Open Menu</next.Button>
+                <next.Button variant='bordered'>
+                  { form.role === 2 ? 'Client' : 'Admin'}
+                </next.Button>
               </next.DropdownTrigger>
               <next.DropdownMenu aria-label='Dynamic Actions'>
                 <next.DropdownItem
@@ -112,7 +138,12 @@ export const SaveUser: React.FC<Props> = ({ isEdit }): JSX.Element => {
           </>
         )}
         <next.ButtonGroup fullWidth>
-          <next.Button color='danger' size='sm' type='button' onClick={handleBack}>
+          <next.Button
+            color='danger'
+            size='sm'
+            type='button'
+            onClick={handleBack}
+          >
             Cancel
           </next.Button>
           <next.Button color='primary' size='sm' type='submit'>

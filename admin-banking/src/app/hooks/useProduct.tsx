@@ -1,10 +1,10 @@
 import { ProductModel } from '@/models'
 import { ProductService } from '@/services'
 import { AppContext } from '@app/context'
-import { Delete, Edit, Eyes } from '@components/icons'
 import * as next from '@nextui-org/react'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useContext, useEffect, useState } from 'react'
+import { ProductModal } from '../components/modals'
 
 interface Column {
   uid: string
@@ -26,7 +26,6 @@ export function useProduct (): ReturnType {
     queryFn: async () => await service.getAll({ token })
   })
 
-
   useEffect(() => {
     if (isSuccess) {
       setProducts(data)
@@ -37,6 +36,8 @@ export function useProduct (): ReturnType {
     { uid: 'pin', name: 'Pin' },
     { uid: 'type', name: 'Type' },
     { uid: 'balance', name: 'Balance' },
+    { uid: 'principal', name: 'Principal' },
+    { uid: 'add', name: 'Add Balance' },
     { uid: 'actions', name: 'Actions' }
   ]
 
@@ -45,6 +46,19 @@ export function useProduct (): ReturnType {
     2: 'Debit',
     3: 'Loan'
   }
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      const { pin, balance } = e.currentTarget
+      const data = {
+        pin: pin.value,
+        balance: Number(balance.value)
+      }
+      await service.addBalance({ token, ...data })
+    },
+    []
+  )
 
   const renderCell = useCallback(
     (product: ProductModel, columnKey: React.Key) => {
@@ -58,23 +72,28 @@ export function useProduct (): ReturnType {
         balance: (
           <p className='text-bold text-sm capitalize'>{product.balance}</p>
         ),
+        principal: (
+          <p className='text-bold text-sm capitalize'>{JSON.stringify(product.principal)}</p>
+        ),
+        add: (
+          <form className='flex items-center gap-4' onSubmit={handleSubmit}>  
+            <input type='hidden' name='pin' value={product.pin} />
+            <div>
+              <next.Input
+                name='balance'
+                placeholder='Amount'
+                type='number'
+                width={75}
+              />
+            </div>
+            <next.Button color='success' type='submit'>
+              Add
+            </next.Button>
+          </form>
+        ),
         actions: (
           <div className='relative flex items-center gap-4'>
-            <next.Tooltip content='Details' color='success'>
-              <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
-                <Eyes />
-              </span>
-            </next.Tooltip>
-            <next.Tooltip content='Edit user' color='primary'>
-              <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
-                <Edit />
-              </span>
-            </next.Tooltip>
-            <next.Tooltip color='danger' content='Delete user'>
-              <span className='text-lg text-danger cursor-pointer active:opacity-50'>
-                <Delete />
-              </span>
-            </next.Tooltip>
+            <ProductModal product={product} />
           </div>
         )
       }

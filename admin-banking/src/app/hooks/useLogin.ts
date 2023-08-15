@@ -27,7 +27,7 @@ interface ReturnTypes {
   handleLogin: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
 }
 
-export const useLogin = ({ onSuccess }: useLoginProps): ReturnTypes => {
+export function useLogin  ({ onSuccess }: useLoginProps): ReturnTypes {
   const service = AuthService.getInstance()
   const [form, setForm] = useState<LoginForm>({
     username: '',

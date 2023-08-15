@@ -63,8 +63,8 @@ export const Header = (): JSX.Element => {
         )}
       </next.NavbarContent>
 
-      <next.NavbarContent justify='end'>
-        {user && (
+      {user && (
+        <next.NavbarContent justify='end'>
           <next.NavbarItem>
             <next.Dropdown>
               <next.DropdownTrigger>
@@ -83,8 +83,8 @@ export const Header = (): JSX.Element => {
               </next.DropdownMenu>
             </next.Dropdown>
           </next.NavbarItem>
-        )}
-      </next.NavbarContent>
+        </next.NavbarContent>
+      )}
 
       <next.NavbarMenu>
         {user !== null ? (
@@ -122,7 +122,8 @@ export const Header = (): JSX.Element => {
               <Link color='foreground' to='/user/sign-up'>
               Sign Up
               </Link>
-            </next.NavbarMenuItem></>
+            </next.NavbarMenuItem>
+          </>
         )}
       </next.NavbarMenu>
     </next.Navbar>

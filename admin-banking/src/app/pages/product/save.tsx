@@ -14,7 +14,7 @@ interface Form {
 }
 
 interface Props {
-  isEdit: boolean
+  isEdit?: boolean
 }
 
 export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
@@ -29,7 +29,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
   const service = ProductService.getInstance()
   const [users, setUsers] = useState<UserModel[]>([])
 
-  const { data, isSuccess, ...query } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ['user-list'],
     queryFn: async () => await userServices.getAll({ token })
   })
@@ -37,6 +37,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
     .setBalance(form.balance)
     .setType(form.type)
     .setUser(form.user)
+    .setLimit(form.limit!)
     .build()
   const mutate = useMutation({
     mutationFn: async () => await service.create({ token, ...product }),
@@ -53,7 +54,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
     if (isSuccess) {
       setUsers(data.filter((user) => user.role === 2))
     }
-  }, [query])
+  }, [isSuccess, data])
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -126,6 +127,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
             <next.Input
               size='lg'
               type='number'
+              name='limit'
               placeholder='Limit'
               value={form.limit?.toString()}
               onChange={(e) =>
@@ -140,6 +142,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
               size='lg'
               type='number'
               placeholder='Balance'
+              name='balance'
               value={form.balance.toString()}
               onChange={(e) =>
                 setForm({ ...form, balance: Number(e.target.value) })

@@ -30,7 +30,7 @@
         "./src/app/components/*"
       ],
       "@hooks/*": [
-        "./src/hooks/*"
+        "./src/app/hooks/*"
       ],
       "@services/*": [
         "./src/services/*"
