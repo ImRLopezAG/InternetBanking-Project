@@ -27,6 +27,20 @@ class BeneficiaryRepository {
     return response['success'];
   }
 
+  Future<bool> delete({required String token, required BeneficiaryModel beneficiary}) async {
+    final response = await http.delete(Uri.https(_baseUrl, '${_endpoint}delete'),
+            body: json.encode(beneficiary.toJson()),
+            headers: {
+          'authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        });
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return json.decode(response.body)['success'];
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   Future<dynamic> getRequest({required String endpoint,required String token,String? positional}) async {
     final response = await http.get(
         Uri.https(_baseUrl, '${_endpoint + endpoint}/$positional'),

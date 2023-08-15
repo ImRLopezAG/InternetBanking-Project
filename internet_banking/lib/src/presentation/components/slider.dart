@@ -96,7 +96,7 @@ class _SliderCard extends StatelessWidget {
                 product: await product,
               ),
             ),
-            onLongPress: () => _deleteDialog(context),
+            onLongPress: () => _deleteDialog(context: context),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: SizedBox(
@@ -149,10 +149,11 @@ class _SliderCard extends StatelessWidget {
     );
   }
 
-  void _deleteDialog(BuildContext context) {
+  void _deleteDialog({required BuildContext context}) {
     showDialog(
       context: context,
       builder: (context) {
+        final provider = Provider.of<AppProvider>(context, listen: false);
         return AlertDialog(
           title: const Text('Delete Beneficiary'),
           content:
@@ -163,7 +164,16 @@ class _SliderCard extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                final delete = BeneficiaryBuilder()
+                    .setReceptor(receptor: beneficiary.id!)
+                    .setSender(sender: provider.user.id!)
+                    .build();
+                await Provider.of<BeneficiaryProvider>(context, listen: false)
+                    .deleteBeneficiary(
+                        token: provider.token, beneficiary: delete);
+                Navigator.pop(context);
+              },
               child: const Text('Delete'),
             ),
           ],

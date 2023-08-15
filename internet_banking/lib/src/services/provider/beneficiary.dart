@@ -11,7 +11,8 @@ class BeneficiaryProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addBeneficiary({required String token, required UserModel user}) async {
+  Future<bool> addBeneficiary(
+      {required String token, required UserModel user}) async {
     try {
       BeneficiaryModel beneficiary = BeneficiaryBuilder()
           .setSender(sender: Payload.fromJson(JWT.decode(token).payload).uid!)
@@ -27,7 +28,8 @@ class BeneficiaryProvider with ChangeNotifier {
     }
   }
 
-  Future<List<UserModel>> getAll({required String token, required String id}) async {
+  Future<List<UserModel>> getAll(
+      {required String token, required String id}) async {
     try {
       final response =
           await _beneficiaryRepository.getAll(token: token, sender: id);
@@ -36,6 +38,21 @@ class BeneficiaryProvider with ChangeNotifier {
     } catch (e) {
       _beneficiaries = [];
       return _beneficiaries;
+    }
+  }
+
+  Future<bool> deleteBeneficiary(
+      {required String token, required BeneficiaryModel beneficiary}) async {
+    try {
+      await _beneficiaryRepository.delete(
+          token: token, beneficiary: beneficiary);
+      beneficiaries = _beneficiaries
+          .where((element) => element.id != beneficiary.receptor)
+          .toList();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
