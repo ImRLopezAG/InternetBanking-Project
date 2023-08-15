@@ -1,6 +1,5 @@
 import { Beneficiary, BeneficiaryModel, User, UserModel } from '../../domain'
 import { IBeneficiaryService } from '../../interfaces'
-import { UserRole } from '../../utils'
 import { GenericService } from '../core'
 export class BeneficiaryService extends GenericService<Beneficiary> implements IBeneficiaryService {
   constructor () {
@@ -20,7 +19,7 @@ export class BeneficiaryService extends GenericService<Beneficiary> implements I
 
   async GetBySender (sender: string): Promise<User[]> {
     const beneficiaries = await BeneficiaryModel.find({ sender }).exec()
-    return await UserModel.find({ $or: [{ _id: { $in: beneficiaries } }, { role: UserRole.Client }] }).exec()
+    return await UserModel.find({ _id: { $in: beneficiaries.map((beneficiary) => beneficiary.receptor) } }).exec()
   }
 
   async DeleteWithBody (beneficiary: Beneficiary): Promise<void> {
