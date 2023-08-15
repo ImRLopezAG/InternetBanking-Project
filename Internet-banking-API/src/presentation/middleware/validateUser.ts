@@ -87,8 +87,6 @@ export const ownerValidation = async (req: Request, res: Response, next: NextFun
 
     const user = await services.findById(payload.uid)
 
-    console.log(user)
-    console.log(`are the same: ${user?._id.toString() === owner}`)
     if (user?._id.toString() !== owner) {
       return res.status(403).json({
         status: 403,
@@ -120,7 +118,6 @@ export const adminValidation = async (req: Request, res: Response, next: NextFun
     }
   } catch (error) {
     if (error instanceof Error) {
-      console.log(error)
       return next(error)
     }
     return res.status(403).send('Unauthorized')

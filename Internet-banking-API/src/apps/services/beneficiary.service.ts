@@ -22,4 +22,9 @@ export class BeneficiaryService extends GenericService<Beneficiary> implements I
     const beneficiaries = await BeneficiaryModel.find({ sender }).exec()
     return await UserModel.find({ $or: [{ _id: { $in: beneficiaries } }, { role: UserRole.Client }] }).exec()
   }
+
+  async DeleteWithBody (beneficiary: Beneficiary): Promise<void> {
+    const { sender, receptor } = beneficiary
+    await BeneficiaryModel.findOneAndDelete({ sender, receptor }).exec()
+  }
 }

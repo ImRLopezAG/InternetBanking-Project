@@ -23,7 +23,6 @@ export class ProductController extends GenericController<Product, ProductService
     try {
       const { pin, balance } = req.body
       const product = await this.service.AddBalance(pin, balance)
-      console.log(product)
       return res.status(200).json(product)
     } catch (error) {
       if (error instanceof Error) {
@@ -83,12 +82,10 @@ export class ProductController extends GenericController<Product, ProductService
       }
 
       if (type === AccountType.CREDIT && !limit) {
-        console.log('here limit')
         return res.status(400).send('Limit is required for credit accounts')
       }
 
       if (limit && type !== AccountType.CREDIT) {
-        console.log('here limit 2')
         return res.status(400).send('Limit is only for credit accounts')
       }
       const { cardNumber, pin, cvv, expirationDate, cardHolder } = Generate.card()
@@ -106,7 +103,6 @@ export class ProductController extends GenericController<Product, ProductService
         .setBalance(type !== AccountType.CREDIT ? balance : limit)
         .setLimit(type === AccountType.CREDIT ? limit : 0)
 
-      console.log(entity)
       req.body = entity
 
       return await super.Create(req, res, next)
