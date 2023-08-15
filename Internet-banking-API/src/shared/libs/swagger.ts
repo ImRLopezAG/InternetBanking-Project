@@ -1216,6 +1216,41 @@ const swaggerDefinition: OAS3Definition = {
         }
       }
     },
+    '/api/Beneficiary/delete-body': {
+      delete: {
+        tags: ['Beneficiary'],
+        summary: 'Delete a Beneficiary',
+        description: 'Delete a Beneficiary',
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/SaveBeneficiary'
+              }
+            }
+          }
+        },
+        responses: {
+          204: {
+            description: 'Delete a Beneficiary'
+          },
+          401: {
+            description: 'Unauthorized'
+          },
+          404: {
+            description: 'Not found'
+          },
+          500: {
+            description: 'Internal server error'
+          }
+        }
+      }
+    },
     '/api/payment/list': {
       get: {
         tags: ['Payment'],

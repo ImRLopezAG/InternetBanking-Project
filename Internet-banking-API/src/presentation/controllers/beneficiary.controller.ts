@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import { NextFunction, Request, Response } from 'express'
 import { Lifecycle, injectable, scoped } from 'tsyringe'
 import { BeneficiaryService, GenericController } from '../../apps'
-import { Beneficiary } from '../../domain'
+import { Beneficiary, BeneficiaryModel } from '../../domain'
 import { IBeneficiaryController } from '../../interfaces'
 
 @injectable()
@@ -35,11 +35,12 @@ export class BeneficiaryController extends GenericController<Beneficiary, Benefi
         return res.status(400).json({ message: 'The sender and receiver are required' })
       }
 
-      const beneficiary = new Beneficiary()
+      const beneficiary = new BeneficiaryModel()
         .withSender(sender)
         .withReceptor(receptor)
-
+      console.log(beneficiary)
       await this.service.DeleteWithBody(beneficiary)
+      return res.status(200).json({ message: 'The beneficiary was deleted' })
     } catch (error: any) {
       if (error.name === 'MongoServerError') {
         return res.status(400).json({ message: error.message })
