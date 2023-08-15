@@ -74,24 +74,6 @@ class _SideMenuState extends State<SideMenu> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.people_rounded),
-              title: const Text('Beneficiary'),
-              onTap: () {
-                _showModal(
-                  context: context,
-                  child: const Text.rich(
-                    TextSpan(
-                      text: 'Beneficiary',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.edit_rounded),
               title: const Text('Edit Profile'),
               onTap: () {

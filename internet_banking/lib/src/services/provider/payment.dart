@@ -6,18 +6,38 @@ class PaymentProvider with ChangeNotifier {
   final PaymentRepository _paymentRepository = PaymentRepository();
 
   List<PaymentModel> _payments = [];
-  List<PaymentModel> get payments =>
-      _payments.where((pay) => pay.type == 1).toList();
-  List<PaymentModel> get transactions =>
-      _payments.where((pay) => pay.type == 2).toList();
+  List<PaymentModel> _transactions = [];
 
-  Future<void> getPayments({required String token}) async {
+  
+
+  Future<bool> getPayments({required String token}) async {
+    _payments.clear();
     final sender = Payload.fromJson(JWT.decode(token).payload).uid!;
-    _payments = await _paymentRepository.getAll(token: token, sender: sender);
+    _payments
+        .addAll(await _paymentRepository.getAll(sender: sender, token: token));
+    print(_payments.length);
+    if (_payments.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  Future<PaymentError> creditPayment({required String token, required PaymentModel pay}) async {
-    final response = await _paymentRepository.creditPayment(token: token, pay: pay);
+  List<PaymentModel> get payments => _payments;
+  List<PaymentModel> get transactions => _transactions;
+
+  Future<List<PaymentModel>> getTransactions({required String token}) async {
+    _transactions.clear();
+    final sender = Payload.fromJson(JWT.decode(token).payload).uid!;
+    _transactions.addAll(
+        await _paymentRepository.getTransactions(sender: sender, token: token));
+    return _transactions;
+  }
+
+  Future<PaymentError> creditPayment(
+      {required String token, required PaymentModel pay}) async {
+    final response =
+        await _paymentRepository.creditPayment(token: token, pay: pay);
     if (response) {
       _payments = [..._payments, pay];
       notifyListeners();
@@ -31,8 +51,10 @@ class PaymentProvider with ChangeNotifier {
     }
   }
 
-  Future<PaymentError> loanPayment({required String token, required PaymentModel pay}) async {
-    final response = await _paymentRepository.loanPayment(token: token, pay: pay);
+  Future<PaymentError> loanPayment(
+      {required String token, required PaymentModel pay}) async {
+    final response =
+        await _paymentRepository.loanPayment(token: token, pay: pay);
     if (response) {
       _payments = [..._payments, pay];
       notifyListeners();
@@ -46,8 +68,10 @@ class PaymentProvider with ChangeNotifier {
     }
   }
 
-  Future<PaymentError> transfer({required String token, required PaymentModel pay}) async {
-    final response = await _paymentRepository.create(token: token, beneficiary: pay);
+  Future<PaymentError> transfer(
+      {required String token, required PaymentModel pay}) async {
+    final response =
+        await _paymentRepository.create(token: token, beneficiary: pay);
     if (response) {
       _payments = [..._payments, pay];
       notifyListeners();

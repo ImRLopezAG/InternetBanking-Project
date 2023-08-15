@@ -21,6 +21,11 @@ class UserRepository {
     return (response as List).map((e) => UserModel.fromJson(e)).toList();
   }
 
+  Future<UserModel> getByEmail({required String email, required String token}) async {
+    final response = await getRequest(endpoint: 'email', token: token, positional: email);
+    return UserModel.fromJson(response);
+  } 
+
   Future<dynamic> getRequest({required String endpoint,required String token,String? positional}) async {
     final response = await http.get(
         Uri.https(_baseUrl, '${_endpoint + endpoint}/$positional'),

@@ -11,41 +11,64 @@ class PaymentRepository {
   PaymentRepository._internal();
   factory PaymentRepository() => _instance;
 
-  Future<List<PaymentModel>> getAll({required String token, required String sender}) async {
-    final response = await getRequest(endpoint: 'list', token: token, positional: sender);
+  Future<List<PaymentModel>> getAll(
+      {required String token, required String sender}) async {
+    final response = await getRequest(
+        endpoint: 'list', token: token, positional: sender);
     return (response as List).map((e) => PaymentModel.fromJson(e)).toList();
   }
 
-  Future<bool> create({required String token, required PaymentModel beneficiary}) async {
+  Future<List<PaymentModel>> getTransactions(
+      {required String token, required String sender}) async {
+    final response = await getRequest(
+        endpoint: 'transaction', token: token, positional: sender);
+    return (response as List).map((e) => PaymentModel.fromJson(e)).toList();
+  }
+
+  Future<List<PaymentModel>> getPayments(
+      {required String token, required String sender}) async {
+    final response = await getRequest(
+        endpoint: 'payment', token: token, positional: sender);
+    return (response as List).map((e) => PaymentModel.fromJson(e)).toList();
+  }
+
+  Future<bool> create(
+      {required String token, required PaymentModel beneficiary}) async {
     try {
-      final response = await postRequest(endpoint: 'create', token: token, body: beneficiary.toJson());
-      print(response.toJson());
+      final response = await postRequest(
+          endpoint: 'create', token: token, body: beneficiary.toJson());
       return response.success!;
     } catch (e) {
       return false;
     }
   }
 
-  Future<bool> creditPayment({required String token, required PaymentModel pay}) async {
+  Future<bool> creditPayment(
+      {required String token, required PaymentModel pay}) async {
     try {
-      final response = await postRequest(endpoint: 'credit', token: token, body: pay.toJson());
+      final response = await postRequest(
+          endpoint: 'credit', token: token, body: pay.toJson());
       return response.success!;
     } catch (e) {
       return false;
     }
   }
 
-  Future<bool> loanPayment({required String token, required PaymentModel pay}) async {
+  Future<bool> loanPayment(
+      {required String token, required PaymentModel pay}) async {
     try {
-      final response = await postRequest(endpoint: 'loan', token: token, body: pay.toJson());
+      final response =
+          await postRequest(endpoint: 'loan', token: token, body: pay.toJson());
       return response.success!;
     } catch (e) {
       return false;
     }
   }
 
-
-  Future<dynamic> getRequest({required String endpoint,required String token,String? positional}) async {
+  Future<dynamic> getRequest(
+      {required String endpoint,
+      required String token,
+      String? positional}) async {
     final response = await http.get(
         Uri.https(_baseUrl, '${_endpoint + endpoint}/$positional'),
         headers: {
@@ -59,28 +82,30 @@ class PaymentRepository {
     }
   }
 
-  Future<Response> postRequest({required String endpoint,required String token,dynamic body}) async{
-    final response = await http.post(Uri.https(_baseUrl,_endpoint + endpoint), 
-    body: json.encode(body),
-    headers: {
-      'authorization': 'Bearer $token',
-      'Content-Type': 'application/json'
-    });
-    if(response.statusCode == 200 || response.statusCode == 201){
+  Future<Response> postRequest(
+      {required String endpoint, required String token, dynamic body}) async {
+    final response = await http.post(Uri.https(_baseUrl, _endpoint + endpoint),
+        body: json.encode(body),
+        headers: {
+          'authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        });
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return Response()
-      .setSuccess(success: true)
-      .setMessage(message: 'Payment successful')
-      .setData(data: json.decode(response.body));
-    }if (response.statusCode == 400) {
+          .setSuccess(success: true)
+          .setMessage(message: 'Payment successful')
+          .setData(data: json.decode(response.body));
+    }
+    if (response.statusCode == 400) {
       return Response()
-      .setSuccess(success: false)
-      .setMessage(message: 'Insufficient funds')
-      .setData(data: json.decode(response.body));
+          .setSuccess(success: false)
+          .setMessage(message: 'Insufficient funds')
+          .setData(data: json.decode(response.body));
     } else {
       return Response()
-      .setSuccess(success: false)
-      .setMessage(message: 'Payment failed')
-      .setData(data: json.decode(response.body));
+          .setSuccess(success: false)
+          .setMessage(message: 'Payment failed')
+          .setData(data: json.decode(response.body));
     }
   }
 }

@@ -47,6 +47,7 @@ class AppProvider with ChangeNotifier {
 
   void logout() {
     _token = '';
+    _homeIndex = 0;
     _user = UserModel();
     notifyListeners();
   }
@@ -55,8 +56,8 @@ class AppProvider with ChangeNotifier {
     try {
       JWT jwt = JWT.decode(_token);
       final payload = Payload.fromJson(jwt.payload);
-      _user = await _userRepository.getById(
-        id: payload.uid!,
+      _user = await _userRepository.getByEmail(
+        email: payload.email!,
         token: _token,
       );
       return true;

@@ -78,7 +78,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
 
   return (
     <div className='flex justify-center w-full items-center'>
-      <form className='flex flex-col gap-3 w-2/4  ' onSubmit={handleSubmit}>
+      <form className='flex flex-col gap-3 w-2/4' onSubmit={handleSubmit}>
         <div className='flex justify-center'>
           <h1 className='text-4xl font-bold'>
             {isEdit ? 'Edit' : 'Create'} Product
@@ -131,7 +131,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
               placeholder='Limit'
               value={form.limit?.toString()}
               onChange={(e) =>
-                setForm({ ...form, limit: Number(e.target.value) })
+                setForm({ ...form, limit: Number(e.target.value), balance: 0 })
               }
             />
           </>
@@ -145,7 +145,7 @@ export const SaveProduct: React.FC<Props> = ({ isEdit }) => {
               name='balance'
               value={form.balance.toString()}
               onChange={(e) =>
-                setForm({ ...form, balance: Number(e.target.value) })
+                setForm({ ...form, balance: Number(e.target.value), limit: 0 })
               }
             />
           </>

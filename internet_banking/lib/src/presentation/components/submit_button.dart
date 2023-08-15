@@ -141,6 +141,9 @@ class _SubmitButtonState extends State<SubmitButton> {
                               : Icons.error_rounded,
                           color: toast.success! ? Colors.green : Colors.red,
                         ),
+                  const SizedBox(
+                    width: 12.0,
+                  ),
                   Flexible(
                     child: Center(
                       child: Text(

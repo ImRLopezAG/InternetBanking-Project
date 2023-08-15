@@ -23,7 +23,6 @@ class MainApp extends StatelessWidget {
         '/login': (_) => const LoginScreen(),
         '/home': (_) => const HomeScreen(),
         '/sig-in': (_) => const SigInScreen(),
-        '/product-details': (_) => const ProductDetailsScreen(),
       },
     );
   }

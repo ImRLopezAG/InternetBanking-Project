@@ -34,13 +34,7 @@ class UserScreen extends StatelessWidget {
                           right: 20.0,
                         ),
                         child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/product-details',
-                              arguments: principal,
-                            );
-                          },
+                          onTap: () => _showDialogDetails(context, principal),
                           child: ProductCard(
                             product: principal,
                           ),
@@ -62,5 +56,37 @@ class UserScreen extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  void _showDialogDetails(BuildContext context, ProductModel product) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Pin: ${product.pin}'),
+          content: SizedBox(
+            height: 80,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Balance: \$ ${product.balance}'),
+                const SizedBox(height: 10.0),
+                Text('Card Number: ${product.cardNumber}'),
+                const SizedBox(height: 10.0),
+                Text('Card Holder: ${product.cardHolder}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
